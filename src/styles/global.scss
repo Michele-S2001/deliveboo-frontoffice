@@ -1,0 +1,39 @@
+/*
+  Reset
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul,
+ol,
+menu {
+  list-style: none;
+}
+
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: currentColor;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/**
+  Utilities
+**/
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.px-10 {
+  padding: 0 10px;
+}
