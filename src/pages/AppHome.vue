@@ -32,7 +32,19 @@ export default {
 
   created() {
     this.fetchCategories();
-  }
+  },
+
+  computed: {
+    categoriesWithImages() {
+
+      return this.categories.map((el) => {
+        return {
+          name: el.name,
+        }
+      })
+
+    }
+  } 
 }
 </script>
 
@@ -44,15 +56,16 @@ export default {
         <div class="container">
           <div class="wrapper">
             <div class="icon">
-              <input v-model="filter" type="checkbox" class="search" value="1">
-              <img src="\img\biryani.png" alt="Category Icon"/>
+              <input v-model="filter" type="checkbox" class="search" value="">
+              <img src="/img/biryani.png" alt="Category Icon"/>
               <span class="category-name">Italiano</span>
             </div>
-            <div class="icon">
+
+            <!-- <div class="icon">
               <input v-model="filter" type="checkbox" class="search" value="2">
               <img src="\img\biryani.png" alt="Category Icon"/>
               <span class="category-name">Italiano</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </section>
@@ -80,6 +93,7 @@ export default {
       padding: 20px 25px;
       border: 3px solid #e19f17;
       border-radius: 56% 44% 45% 55%/58% 53% 47% 42%;
+      text-align: center;
 
       input[type="checkbox"] {
         position: absolute;
