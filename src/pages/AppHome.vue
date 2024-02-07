@@ -1,11 +1,13 @@
 <script>
 import DefaultLayout from '../layouts/DefaultLayout.vue';
+import AppRestaurantCard from '../components/AppRestaurantCard.vue';
 import store from '../store';
 import axios from 'axios';
 
 export default {
   components: {
-    DefaultLayout
+    DefaultLayout,
+    AppRestaurantCard
   },
 
   data() {
@@ -84,6 +86,7 @@ export default {
       <!-- search section -->
       <section class="search px-10">
         <div class="container">
+          <h2>Clicca per filtrare secondo i tuoi gusti !</h2>
           <!-- filtri delle categorie ristorante -->
           <div v-if="categories" class="wrapper">
             <!-- categorie ciclate -->
@@ -103,15 +106,16 @@ export default {
       <section v-if="restaurants.length !== 0" class="showcase px-10">
         <div class="container">
           <div class="restaurants">
-            <div v-for="restaurant in restaurants" class="restaurant-card">
-              <img class="restaurant-img" :src="`http://127.0.0.1:8000/storage/${restaurant.thumb}`" alt="">
-              <p>{{ restaurant.name }}</p>
-              <div class="categories" v-for="category in restaurant.categories" :key="restaurant.id">{{ category.name }}</div>
-            </div>
+            <AppRestaurantCard v-for="restaurant in restaurants" :currRestaurant="restaurant" :key="restaurant.id"/>
           </div>
           <div class="pages">
             <span class="page-number" @click="changePage(n)" v-for="n in lastPage" :key="n">{{ n }}</span>
           </div>
+        </div>
+      </section>
+      <section v-else class="not-restaurants px-10">
+        <div class="container">
+          <h3>Nessun ristorante corrispondente</h3>
         </div>
       </section>
     </main>
@@ -121,11 +125,16 @@ export default {
 
 <style lang="scss" scoped>
 @use '../styles/partials/variables' as *;
+@use '../styles/partials/mixins' as *;
 
 .search {
   background-color: $orange;
   padding-top: 80px;
-  padding-bottom: 20px;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
   .wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -180,35 +189,37 @@ export default {
 .wrapper .icon > .selected {
   background-color: $lightGreen;
 }
-
-/**
-STILE TEMPORANEO PER DISTINGUERE I RISTORANTI
-*/
 .showcase {
-  padding-top: 100px;
+  padding-top: 50px;
   padding-bottom: 100px;
-
   .restaurants {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 40px;
-    .restaurant-card {
-      //border: 2px solid black;
+  }
 
-      .restaurant-img {
-        border-radius: 20px;
-        //max-height: 150px;
-      }
-      .categories {
-        background-color: cadetblue;
+  .pages {
+    padding: 20px 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    .page-number {
+      display: block;
+      cursor: pointer;
+      @include primaryButton();
+
+      &:hover {
+        background-color: $lightGreen;
       }
     }
   }
-
 }
 
-/* FINE STILE TEMPORANEO */
-
+.not-restaurants {
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
 
 @media (min-width: 674px) {
 
@@ -216,7 +227,6 @@ STILE TEMPORANEO PER DISTINGUERE I RISTORANTI
     .wrapper {
       gap: 30px;
     }
-
   }
 }
 </style>
