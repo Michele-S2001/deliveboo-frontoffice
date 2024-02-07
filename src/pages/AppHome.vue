@@ -61,6 +61,7 @@ export default {
 
     selectedCategories() {
       this.fetchRestaurants();
+      this.currPage = 1;
     }
   },
 
