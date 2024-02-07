@@ -109,8 +109,12 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-   
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: $orange;
   }
 
 
