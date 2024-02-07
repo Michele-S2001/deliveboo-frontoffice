@@ -1,22 +1,21 @@
 <script>
 import DefaultLayout from '../layouts/DefaultLayout.vue';
-import AppHeader from '../components/AppHeader.vue';
 import store from '../store';
 import axios from 'axios';
 
-
-
 export default {
   components: {
-    DefaultLayout,
-    AppHeader
+    DefaultLayout
   },
 
   data() {
     return {
       page: 'Home page di TasteIT',
       selectedCategories: [],
-      categories: []
+      categories: [],
+      restaurants: [],
+      currPage: 1,
+      lastPage: -1
     }
   },
 
@@ -27,11 +26,40 @@ export default {
         .then((res) => {
           this.categories = res.data.results;
         })
+    },
+
+    fetchRestaurants() {
+      axios 
+        .get(`${store.BASE_URL}/restaurants`, {
+          params: {
+            page: this.currPage,
+            arrOfSelectedCat: this.selectedCategories
+          }
+        })
+        .then((res) => {
+          this.lastPage = res.data.results.last_page;
+          this.restaurants = res.data.results.data;
+        })
+    },
+
+    changePage(i) {
+      this.currPage = i;
     }
   },
 
   created() {
     this.fetchCategories();
+    this.fetchRestaurants();
+  },
+
+  watch: {
+    currPage() {
+      this.fetchRestaurants();
+    },
+
+    selectedCategories() {
+      this.fetchRestaurants();
+    }
   },
 
   computed: {
@@ -53,8 +81,8 @@ export default {
 <template>
   <DefaultLayout>
     <main class="content">
-      <!-- hero section -->
-      <section class="hero">
+      <!-- search section -->
+      <section class="search px-10">
         <div class="container">
           <!-- filtri delle categorie ristorante -->
           <div v-if="categories" class="wrapper">
@@ -69,6 +97,23 @@ export default {
           </div>
         </div>
       </section>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ffc244" fill-opacity="1" d="M0,256L48,234.7C96,213,192,171,288,176C384,181,480,235,576,218.7C672,203,768,117,864,122.7C960,128,1056,224,1152,266.7C1248,309,1344,299,1392,293.3L1440,288L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+
+      <!-- sezione ristoranti -->
+      <section v-if="restaurants.length !== 0" class="showcase px-10">
+        <div class="container">
+          <div class="restaurants">
+            <div v-for="restaurant in restaurants" class="restaurant-card">
+              <img class="restaurant-img" :src="`http://127.0.0.1:8000/storage/${restaurant.thumb}`" alt="">
+              <p>{{ restaurant.name }}</p>
+              <div class="categories" v-for="category in restaurant.categories" :key="restaurant.id">{{ category.name }}</div>
+            </div>
+          </div>
+          <div class="pages">
+            <span class="page-number" @click="changePage(n)" v-for="n in lastPage" :key="n">{{ n }}</span>
+          </div>
+        </div>
+      </section>
     </main>
   </DefaultLayout>
 </template>
@@ -77,9 +122,10 @@ export default {
 <style lang="scss" scoped>
 @use '../styles/partials/variables' as *;
 
-.hero {
+.search {
   background-color: $orange;
-  padding: 50px 0;
+  padding-top: 80px;
+  padding-bottom: 20px;
   .wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -135,9 +181,38 @@ export default {
   background-color: $lightGreen;
 }
 
+/**
+STILE TEMPORANEO PER DISTINGUERE I RISTORANTI
+*/
+.showcase {
+  padding-top: 100px;
+  padding-bottom: 100px;
+
+  .restaurants {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 40px;
+    .restaurant-card {
+      //border: 2px solid black;
+
+      .restaurant-img {
+        border-radius: 20px;
+        //max-height: 150px;
+      }
+      .categories {
+        background-color: cadetblue;
+      }
+    }
+  }
+
+}
+
+/* FINE STILE TEMPORANEO */
+
+
 @media (min-width: 674px) {
 
-  .hero {
+  .search {
     .wrapper {
       gap: 30px;
     }
