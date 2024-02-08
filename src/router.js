@@ -11,12 +11,13 @@ const router = createRouter({
       name: 'home',
       component: AppHome
     },
-    // TODO: Correggere la rotta in dinamica dopo aver provato il layout
+    
     {
-    path: '/menu',
+    path: '/menu/:slug',
     name: 'menu',
+    props: true,
     component: AppMenu
-  }
+    }
   ]
 });
 

@@ -2,13 +2,13 @@
   <!-- start card -->
   <div class="dish-card">
     <div class="dish-card__header">
-      <img src="../../img/placeHolder.jpg">
+      <img :src="`http://127.0.0.1:8000/storage/${dish.image}`">
     </div>
     <div class="dish-card__body">
-      <h4 class="dish-name">Lorem ipsum man</h4>
-      <p class="dish-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque quam voluptate accusantium, corrupti libero beatae est aliquam. Sint, molestias autem.</p>
+      <h4 class="dish-name">{{ dish.name }}</h4>
+      <p class="dish-description">{{ dish.description }}</p>
       <div class="tools">
-        <div class="price">14.00 &euro;</div>
+        <div class="price">{{ dish.price }} &euro;</div>
         <div class="add-to-cart">
           <img src="../../img/add.png">
         </div>
@@ -20,7 +20,12 @@
 
 <script>
   export default {
-    
+    props: {
+      dish: {
+        type: Object,
+        required: true
+      }
+    }
   }
 </script>
 
@@ -62,6 +67,7 @@
 
       .add-to-cart {
         font-size: 30px;
+        cursor: pointer;
       }
     }
   }
@@ -71,7 +77,12 @@
   .dish-card {
     display: flex;
 
+    &__header {
+      flex-basis: 30%;
+    }
+
     &__body {
+      flex-basis: 70%;
       .tools {
         margin-top: auto;
       }

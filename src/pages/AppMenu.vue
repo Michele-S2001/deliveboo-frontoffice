@@ -1,9 +1,53 @@
 <script>
 import DefaultLayout from '../layouts/DefaultLayout.vue';
+import AppDishCard from '../components/AppDishCard.vue';
+import store from '../store';
+import axios from 'axios';
 
 export default {
   components: {
-    DefaultLayout
+    DefaultLayout,
+    AppDishCard
+  },
+
+  props: {
+    slug: String
+  },
+
+  data() {
+    return {
+      restaurant: null
+    }
+  },
+
+  methods: {
+    fetchRestaurant() {
+      axios
+        .get(`${store.BASE_URL}/restaurants/${this.slug}`)
+        .then((res) => {
+          this.restaurant = res.data.result;
+        })
+        .catch((error) => {
+          if (error.response.status === 404) {
+            //this.$router.push({ name: 'not-found'}); 
+            //TODO: Pagina not found 
+          }
+        })
+    }
+  },
+
+  created() {
+    this.fetchRestaurant();
+  },
+
+  computed: {
+    categories() {
+      return this.restaurant.categories;
+    },
+
+    dishes() {
+      return this.restaurant.dishes;
+    }
   }
 }
 </script>
@@ -13,40 +57,26 @@ export default {
     <div class="restaurant-window">
       <div class="restaurant-window__overlay"></div>
     </div>
-    <main class="content px-10">
+    <main v-if="restaurant" class="content px-10">
       <div class="container">
         <div class="menu">
           <div class="menu__banner">
-            <h1 class="name">Restaurant name</h1>
+            <h1 class="name">{{ restaurant.name }}</h1>
+            <p class="address">{{ restaurant.address}}</p>
             <div class="categories">
-              <span>lorem</span>
-              <span>lorem</span>
-              <span>lorem</span>
+              <span v-for="category in categories" :key="category.id">{{category.name}}</span>
             </div>
           </div>
           <div class="menu__cart-desktop-wrapper">
             <div class="menu-cart">
                 <!-- TODO: Carrello ordine, con placeholder se non c'è nessun piatto selezionato -->
+                <h2>Il tuo ordine</h2>
             </div>
           </div>
           <div class="menu__cart-mobile"></div>
           <div class="menu__list">
             <!-- start card -->
-            <div class="dish-card">
-              <div class="dish-card__header">
-                <img src="../../img/placeHolder.jpg">
-              </div>
-              <div class="dish-card__body">
-                <h4 class="dish-name">Lorem ipsum man</h4>
-                <p class="dish-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque quam voluptate accusantium, corrupti libero beatae est aliquam. Sint, molestias autem.</p>
-                <div class="tools">
-                  <div class="price">14.00 &euro;</div>
-                  <div class="add-to-cart">
-                    <img src="../../img/add.png">
-                  </div>
-                </div>
-              </div>
-            </div>
+            <AppDishCard :dish="dish" v-for="dish in dishes" :key="dish.id"/>
             <!-- end card -->
           </div>
         </div>
@@ -91,13 +121,17 @@ export default {
     // banner 
     &__banner {
       background-color: $white;
-      padding: 20px 10px;
+      padding: 20px;
       grid-area: banner;
       border-radius: 20px 60px 20px 20px;
       box-shadow: 5px 5px 12px 5px rgba(0,0,0,0.2);
 
       .name {
         margin-bottom: 24px;
+      }
+
+      .address { 
+        margin-bottom: 16px;
       }
       .categories {
         display: flex;
@@ -136,67 +170,6 @@ export default {
       display: grid;
       grid-template-columns: 1fr;
       gap: 20px;
-
-      .dish-card {
-        border-bottom: 2px solid rgba($lightGreen, $alpha: 0.4);
-        border-radius: 20px;
-
-        &__header {
-          padding: 10px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-
-          img {
-            border-radius: 15px;
-          }
-        }
-
-        &__body {
-          padding: 10px;
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          .dish-name {
-            font-size: 24px;
-          }
-          .tools {
-            padding: 0 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            .price {
-              font-weight: 600;
-            }
-
-            .add-to-cart {
-              font-size: 30px;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: 610px) {
-
-  .content {
-    .menu {
-
-      &__list {
-        
-        .dish-card {
-          display: flex;
-
-          &__body {
-            .tools {
-              margin-top: auto;
-            }
-          }
-        }
-      }
     }
   }
 }
