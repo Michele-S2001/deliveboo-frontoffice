@@ -1,11 +1,9 @@
 <template>
-    <section class="page_hero debu">
+    <section class="page_hero px-10">
         <div class="container">
             <div class="row">
                 <div class="col-8">
-                    <h1 class="page_hero-title">Dal nostro cuore alla tua porta, scopri il gusto della consegna a domicilio
-                    </h1>
-                    <p class="page_hero-subtitle"></p>
+                    <h1 class="page_hero-title">Dal nostro cuore alla tua porta, scopri il gusto della consegna a domicilio</h1>
                 </div>
                 <div class="col-4">
                     <video autoplay loop muted class="page_hero-video" src="/img/hero-video.mp4"></video>
@@ -20,15 +18,16 @@
 @use '../styles/partials/mixins' as *;
 
 .page_hero {
-    padding: 30px;
+
     background-color: $orange;
+    padding-top: 80px;
+    padding-bottom: 80px;
 
     .page_hero-video {
         max-width: 100%;
         height: 100%;
         display: block;
         object-fit: cover;
-        // border-radius: 20px;
         box-shadow: -4px 0px 0px 2px #f0b12e;
         border: 3px solid #e19f17;
         border-radius: 56% 44% 45% 55%/58% 53% 47% 42%
@@ -43,6 +42,7 @@
 
     .page_hero-title {
         font-size: $title-sm;
+        text-align: center;
     }
 
     .col-4,
