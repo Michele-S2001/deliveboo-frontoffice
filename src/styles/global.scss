@@ -42,6 +42,21 @@ body {
   font-family: 'IBM Plex Sans Condensed', sans-serif;
 }
 
+.row {
+  display: flex;
+}
+
+.col-4 {
+  flex-basis: calc(100%/12)*4;
+}
+
+.col-8 {
+  flex-basis: calc(100%/12)*8;
+}
+
+
+
+
 /* ibm-plex-sans-condensed-latin-400-normal */
 @font-face {
   font-family: 'IBM Plex Sans Condensed';
