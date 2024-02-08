@@ -1,13 +1,15 @@
 <script>
 import DefaultLayout from '../layouts/DefaultLayout.vue';
 import AppRestaurantCard from '../components/AppRestaurantCard.vue';
+import AppHero from '../components/AppHero.vue';
 import store from '../store';
 import axios from 'axios';
 
 export default {
   components: {
     DefaultLayout,
-    AppRestaurantCard
+    AppRestaurantCard,
+    AppHero
   },
 
   data() {
@@ -84,6 +86,8 @@ export default {
 <template>
   <DefaultLayout>
     <main class="content">
+      <!-- hero -->
+      <AppHero></AppHero>
       <!-- search section -->
       <section class="search px-10">
         <div class="container">
