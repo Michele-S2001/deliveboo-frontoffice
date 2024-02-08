@@ -1,7 +1,6 @@
 <script>
 import DefaultLayout from '../layouts/DefaultLayout.vue';
 import AppHeader from '../components/AppHeader.vue';
-import AppHero from '../components/AppHero.vue';
 import store from '../store';
 import axios from 'axios';
 
@@ -10,8 +9,7 @@ import axios from 'axios';
 export default {
   components: {
     DefaultLayout,
-    AppHeader,
-    AppHero
+    AppHeader
   },
 
   data() {
@@ -41,8 +39,6 @@ export default {
 <template>
   <DefaultLayout>
     <main class="content">
-      <!-- Page Hero -->
-      <AppHero></AppHero>
       <!-- hero section -->
       <section class="hero">
         <div class="container">
