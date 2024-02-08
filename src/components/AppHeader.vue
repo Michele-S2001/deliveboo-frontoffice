@@ -113,7 +113,7 @@ export default {
     top: 60px;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 12vh;
     background-color: $orange;
   }
 
