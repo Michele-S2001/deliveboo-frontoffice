@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import AppHome from './pages/AppHome.vue';
 import AppMenu from './pages/AppMenu.vue';
+import AppCart from './pages/AppCart.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,7 +18,12 @@ const router = createRouter({
     name: 'menu',
     props: true,
     component: AppMenu
-    }
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: AppCart
+    },
   ]
 });
 
