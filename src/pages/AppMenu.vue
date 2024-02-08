@@ -1,13 +1,15 @@
 <script>
 import DefaultLayout from '../layouts/DefaultLayout.vue';
 import AppDishCard from '../components/AppDishCard.vue';
+import AppLoader from '../components/AppLoader.vue';
 import store from '../store';
 import axios from 'axios';
 
 export default {
   components: {
     DefaultLayout,
-    AppDishCard
+    AppDishCard,
+    AppLoader
   },
 
   props: {
@@ -47,7 +49,7 @@ export default {
 
     dishes() {
       return this.restaurant.dishes;
-    }
+    },
   }
 }
 </script>
@@ -55,6 +57,7 @@ export default {
 <template>
   <DefaultLayout>
     <div class="restaurant-window">
+      <img v-if="restaurant" :src="`http://127.0.0.1:8000/storage/${restaurant.thumb}`" alt="">
       <div class="restaurant-window__overlay"></div>
     </div>
     <main v-if="restaurant" class="content px-10">
@@ -70,7 +73,11 @@ export default {
           <div class="menu__cart-desktop-wrapper">
             <div class="menu-cart">
                 <!-- TODO: Carrello ordine, con placeholder se non c'è nessun piatto selezionato -->
-                <h2>Il tuo ordine</h2>
+                <h2 class="menu-cart__title">Il tuo ordine</h2>
+                <div class="menu-cart__empty">
+                  <img src="../../img/grocery-cart.png">
+                  <p class="message">Ancora non hai aggiunto nulla al carrello, appena lo farai i prodotti e le quantità appariranno qui</p>
+                </div>
             </div>
           </div>
           <div class="menu__cart-mobile"></div>
@@ -82,18 +89,24 @@ export default {
         </div>
       </div>
     </main>
+    <AppLoader v-else />
   </DefaultLayout>
 </template>
 
 <style lang="scss" scoped>
 @use '../styles/partials/variables' as *;
 .restaurant-window {
-  background-image: url(../../img/placeHolder.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: top;
-  padding: 100px 0;
   position: relative;
+  max-height: 270px;
+
+  img {
+    width: 100%;
+    object-fit: cover;
+    max-height: 270px;
+  }
 
   &__overlay {
     position: absolute;
@@ -147,7 +160,26 @@ export default {
         background-color: $white;
         box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.44);
         border-radius: 20px;
-        min-height: 200px;
+        padding: 10px 20px;
+
+        &__title {
+          text-align: center;
+          margin-bottom: 34px;
+          font-size: 34px;
+        }
+
+        &__empty {
+          img {
+            margin: 0 auto;
+            margin-bottom: 24px;
+          }
+          
+          .message {
+            text-align: center;
+            font-size: 21px;
+            padding: 20px 0;
+          }
+        }
       }
     }
 

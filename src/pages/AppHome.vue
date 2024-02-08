@@ -2,6 +2,7 @@
 import DefaultLayout from '../layouts/DefaultLayout.vue';
 import AppRestaurantCard from '../components/AppRestaurantCard.vue';
 import AppHero from '../components/AppHero.vue';
+import AppLoader from '../components/AppLoader.vue';
 import store from '../store';
 import axios from 'axios';
 
@@ -9,7 +10,8 @@ export default {
   components: {
     DefaultLayout,
     AppRestaurantCard,
-    AppHero
+    AppHero,
+    AppLoader
   },
 
   data() {
@@ -103,9 +105,7 @@ export default {
               <span class="icon__text">{{ category.name }}</span>
             </div>
           </div>
-          <div class="loader" v-else>
-            <img src="/img/Rolling-0.7s-204px.gif">
-          </div>
+          <AppLoader v-else/>
         </div>
       </section>
 
@@ -227,12 +227,6 @@ export default {
   text-align: center;
   padding-top: 40px;
   padding-bottom: 40px;
-}
-
-.loader {
-  img {
-    margin: 0 auto;
-  }
 }
 
 @media (min-width: 674px) {
