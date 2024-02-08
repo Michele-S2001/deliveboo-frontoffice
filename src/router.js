@@ -12,21 +12,7 @@ const router = createRouter({
       name: 'home',
       component: AppHome
     },
-    {
-
-      //rotta per la pagina dei pagamenti
-      path: '/cart',
-      name: 'cart',
-      component: AppCart
-    },
-
-    {
-      path: '/menu/:slug',
-      name: 'menu',
-      props: true,
-      component: AppMenu
-},
-  ]
+    ]
 });
 
 export { router };
