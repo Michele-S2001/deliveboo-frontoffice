@@ -18,7 +18,14 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: AppCart
-    }
+    },
+
+    {
+      path: '/menu/:slug',
+      name: 'menu',
+      props: true,
+      component: AppMenu
+},
   ]
 });
 
