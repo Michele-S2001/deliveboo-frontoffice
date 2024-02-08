@@ -1,15 +1,17 @@
 <template>
-  <div class="restaurant-card">
-    <div class="restaurant-card__header">
-      <img class="restaurant-img" :src="`http://127.0.0.1:8000/storage/${currRestaurant.thumb}`">
-      <div class="categories">
-        <p class="category" v-for="category in currRestaurant.categories" :key="currRestaurant.id">{{ category.name }}</p>
+  <router-link :to="{ name: 'menu', params: { slug: currRestaurant.slug}}">
+    <div class="restaurant-card">
+      <div class="restaurant-card__header">
+        <img class="restaurant-img" :src="`http://127.0.0.1:8000/storage/${currRestaurant.thumb}`">
+        <div class="categories">
+          <p class="category" v-for="category in currRestaurant.categories" :key="currRestaurant.id">{{ category.name }}</p>
+        </div>
+      </div>
+      <div class="restaurant-card__body">
+        <p class="restaurant-name">{{ currRestaurant.name }}</p>
       </div>
     </div>
-    <div class="restaurant-card__body">
-      <p class="restaurant-name">{{ currRestaurant.name }}</p>
-    </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
