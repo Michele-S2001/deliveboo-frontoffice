@@ -101,6 +101,7 @@ export default {
           </div>
         </div>
       </section>
+      
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ffc244" fill-opacity="1" d="M0,256L48,234.7C96,213,192,171,288,176C384,181,480,235,576,218.7C672,203,768,117,864,122.7C960,128,1056,224,1152,266.7C1248,309,1344,299,1392,293.3L1440,288L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
 
       <!-- sezione ristoranti -->
@@ -191,8 +192,7 @@ export default {
   background-color: $lightGreen;
 }
 .showcase {
-  padding-top: 50px;
-  padding-bottom: 100px;
+  padding-top: 20px;
   .restaurants {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

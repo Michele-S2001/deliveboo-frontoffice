@@ -28,7 +28,9 @@ export default {
   <header class="page-header px-10">
     <div class="container">
       <nav class="navbar">
-        <img class="navbar__logo" src="/img/logo.png" alt="logo">
+        <router-link :to="{ name: 'home' }">
+          <img class="navbar__logo" src="/img/logo.png" alt="logo">
+        </router-link>
         <div class="navbar__access-group ">
           <a class="display_none" href="http://127.0.0.1:8000/login">Accedi</a>
           <a class="display_none" href="http://127.0.0.1:8000/register">Registrati</a>
@@ -74,8 +76,11 @@ export default {
       display: flex;
       gap: 15px;
 
-      & > * {
+      & > a {
         @include primaryButton;
+        &:hover {
+          background-color: $lightGreen;
+        }
       }
     }
 
@@ -93,6 +98,11 @@ export default {
 
 @media (max-width: 768px) {
   .page-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
     .navbar {
       &__logo {
         width: 120px;
@@ -106,15 +116,20 @@ export default {
 
   .burger-links {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: absolute;
     top: 60px;
     left: 0;
-    width: 100vw;
+    width: 100%;
     height: 12vh;
-    background-color: $orange;
+    border-bottom: 5px solid $green;
+    background: rgb(255,194,68);
+    background: linear-gradient(180deg, rgba(255,194,68,1) 0%, rgba(254,151,56,1) 100%);
+
+    & > a:hover {
+      background-color: $lightGreen;
+    }
   }
 
 
