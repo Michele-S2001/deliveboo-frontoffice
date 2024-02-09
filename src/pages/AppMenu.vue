@@ -2,6 +2,8 @@
 import DefaultLayout from '../layouts/DefaultLayout.vue';
 import AppDishCard from '../components/AppDishCard.vue';
 import AppLoader from '../components/AppLoader.vue';
+import AppDishInsideCart from '../components/AppDishInsideCart.vue';
+import AppEmptyCart from '../components/AppEmptyCart.vue';
 import store from '../store';
 import axios from 'axios';
 
@@ -9,7 +11,9 @@ export default {
   components: {
     DefaultLayout,
     AppDishCard,
-    AppLoader
+    AppLoader,
+    AppDishInsideCart,
+    AppEmptyCart
   },
 
   props: {
@@ -18,7 +22,8 @@ export default {
 
   data() {
     return {
-      restaurant: null
+      restaurant: null,
+      cartMobileToggle: false
     }
   },
 
@@ -35,6 +40,10 @@ export default {
             //TODO: Pagina not found 
           }
         })
+    },
+
+    openCart() {
+      this.cartMobileToggle = !this.cartMobileToggle
     }
   },
 
@@ -71,16 +80,39 @@ export default {
             </div>
           </div>
           <div class="menu__cart-desktop-wrapper">
+            <!-- cart nella versione desktop -->
             <div class="menu-cart">
-                <!-- TODO: Carrello ordine, con placeholder se non c'è nessun piatto selezionato -->
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
-                <div class="menu-cart__empty">
-                  <img src="../../img/grocery-cart.png">
-                  <p class="message">Ancora non hai aggiunto nulla al carrello, appena lo farai i prodotti e le quantità appariranno qui</p>
+                <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
+                <div class="dishes" v-if="true">
+                  <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
+                  <AppDishInsideCart v-for="n in 5"/>
+                  <!-- PROVA DISH CARD -->
+                  <div class="checkout-btn">
+                    <a href="#">Ordinare per 32.00 &euro;</a>
+                  </div>
                 </div>
+                <AppEmptyCart v-else/>
             </div>
           </div>
-          <div class="menu__cart-mobile"></div>
+          <!-- cart nella versione mobile -->
+          <div class="menu__cart-mobile">
+            <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
+              <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
+              <div class="dishes" v-if="true">
+                <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
+                <AppDishInsideCart v-for="n in 10"/>
+                <!-- PROVA DISH CARD -->
+                <div class="checkout-btn-mobile">
+                  <a href="#">Ordinare per 32.00 &euro;</a>
+                </div>
+              </div>
+              <AppEmptyCart v-else/>
+            </div>
+            <div class="menu__cart-mobile__button" @click="openCart()">
+              Carrello
+            </div>
+          </div>
           <div class="menu__list">
             <!-- start card -->
             <AppDishCard :dish="dish" v-for="dish in dishes" :key="dish.id"/>
@@ -95,6 +127,7 @@ export default {
 
 <style lang="scss" scoped>
 @use '../styles/partials/variables' as *;
+@use '../styles/partials/mixins' as *;
 .restaurant-window {
   background-repeat: no-repeat;
   background-size: cover;
@@ -160,7 +193,9 @@ export default {
         background-color: $white;
         box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.44);
         border-radius: 20px;
-        padding: 10px 20px;
+        padding: 10px;
+        max-height: 500px;
+        overflow: auto;
 
         &__title {
           text-align: center;
@@ -168,16 +203,14 @@ export default {
           font-size: 34px;
         }
 
-        &__empty {
-          img {
-            margin: 0 auto;
-            margin-bottom: 24px;
-          }
-          
-          .message {
+        .dishes {
+          .checkout-btn {
+            margin-top: 40px;
             text-align: center;
-            font-size: 21px;
-            padding: 20px 0;
+            @include primaryButton();
+            &:hover {
+              background-color: $lightGreen;
+            }
           }
         }
       }
@@ -189,11 +222,51 @@ export default {
       bottom: 20px;
       left: 0;
       right: 0;
-      min-height: 50px;
-      max-width: 80%;
-      background-color: $green;
+      max-width: 90%;
       margin: 0 auto;
       border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      &__button {
+        padding: 10px 0;
+        color: $white;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 20px;
+        background-color: $green;
+        user-select: none;
+        &:hover {
+          background-color: $lightGreen;
+        }
+      }
+
+      &__wrapper {
+        background-color: $white;
+        max-height: 0;
+        overflow: auto;
+        border-radius: 20px;
+        transition: 0.5s ease-out;
+        
+        .dishes {
+          .checkout-btn-mobile {
+            text-align: center;
+            margin: 34px 24px 14px 24px;
+            @include primaryButton();
+            &:hover {
+              background-color: $lightGreen;
+            }
+          }
+        }
+        .dishes {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
     }
 
     //corpo del menu
@@ -202,6 +275,21 @@ export default {
       display: grid;
       grid-template-columns: 1fr;
       gap: 20px;
+    }
+  }
+}
+
+.content .menu .menu__cart-mobile .menu__cart-mobile__wrapper.show {
+  max-height: 500px;
+  box-shadow: 2px 2px 8px 5px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 638px) {
+  .content {
+    .menu {
+      &__cart-mobile {
+        max-width: 60%;
+      }
     }
   }
 }

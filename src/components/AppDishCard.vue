@@ -40,8 +40,6 @@
   &__header {
     padding: 10px;
     
-    
-    
     img {
       border-radius: 15px;
       object-fit: cover;
