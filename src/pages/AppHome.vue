@@ -21,7 +21,8 @@ export default {
       categories: [],
       restaurants: [],
       currPage: 1,
-      lastPage: -1
+      lastPage: -1,
+      totalResults: 0,
     }
   },
 
@@ -45,8 +46,10 @@ export default {
         .then((res) => {
           this.lastPage = res.data.results.last_page;
           this.restaurants = res.data.results.data;
+          this.totalResults = res.data.results.total;
         })
     },
+    
 
     changePage(i) {
       this.currPage = i;
@@ -81,7 +84,9 @@ export default {
       })
 
     }
-  } 
+  },
+
+ 
 }
 </script>
 
@@ -94,6 +99,11 @@ export default {
       <section class="search px-10">
         <div class="container">
           <h2>Clicca per filtrare secondo i tuoi gusti !</h2>
+          <!-- recuperiamo il numero di ristoranti per categorie -->
+          <h4>Totale risultati: {{ totalResults }}</h4>
+          <button class="button">
+            <a href="#restaurant-list">Vai alla lista</a>
+          </button>
           <!-- filtri delle categorie ristorante -->
           <div v-if="!(categories.length === 0)" class="wrapper">
             <!-- categorie ciclate -->
@@ -108,12 +118,14 @@ export default {
           <AppLoader v-else/>
         </div>
       </section>
+      <svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 260" transform="scale(-1, -1)"> <path fill="#ffc244" fill-opacity="1" d="M0,160L80,186.7C160,213,320,267,480,250.7C640,235,800,149,960,128C1120,107,1280,149,1360,170.7L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path></svg>
 
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ffc244" fill-opacity="1" d="M0,256L48,234.7C96,213,192,171,288,176C384,181,480,235,576,218.7C672,203,768,117,864,122.7C960,128,1056,224,1152,266.7C1248,309,1344,299,1392,293.3L1440,288L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+     
 
       <!-- sezione ristoranti -->
       <section v-if="restaurants.length !== 0" class="showcase px-10">
         <div class="container">
+          <h1 id="restaurant-list" class="px-10 mb-15">I tuoi ristoranti:</h1>
           <div class="restaurants">
             <AppRestaurantCard v-for="restaurant in restaurants" :currRestaurant="restaurant" :key="restaurant.id"/>
           </div>
@@ -136,11 +148,34 @@ export default {
 @use '../styles/partials/variables' as *;
 @use '../styles/partials/mixins' as *;
 
+.button {
+  cursor: pointer;
+  display: flex;
+  margin: 0 auto;
+  color: $white;
+  border: none;
+  background-color: $green;
+  padding: 0 20px;
+  line-height: 40px;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  &:hover {
+  background-color: $lightGreen;
+  }
+}
+.svg {
+  margin-top: -1px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+
 .search {
   background-color: $orange;
   padding-top: 80px;
 
-  h2 {
+  h2, h4 {
     text-align: center;
     margin-bottom: 30px;
   }
