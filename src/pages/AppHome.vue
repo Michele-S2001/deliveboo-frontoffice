@@ -179,6 +179,10 @@ export default {
     text-align: center;
     margin-bottom: 30px;
   }
+
+  .button {
+    margin-bottom: 30px;
+  }
   .wrapper {
     display: flex;
     flex-wrap: wrap;
