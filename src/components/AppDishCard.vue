@@ -35,15 +35,18 @@
 .dish-card {
   border-bottom: 2px solid rgba($lightGreen, $alpha: 0.4);
   border-radius: 20px;
+  
 
   &__header {
     padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
+    
+    
+    
     img {
       border-radius: 15px;
+      object-fit: cover;
+      height: 250px;
+      width: 100%;
     }
   }
 
@@ -78,7 +81,15 @@
     display: flex;
 
     &__header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       flex-basis: 30%;
+      img {
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
+      }
     }
 
     &__body {

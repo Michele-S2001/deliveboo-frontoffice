@@ -30,6 +30,9 @@
     position: relative;
     .restaurant-img {
       border-radius: 20px;
+      object-fit: cover;
+      height: 250px;
+      width: 100%;
     }
     .categories {
       position: absolute;
