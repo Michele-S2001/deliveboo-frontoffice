@@ -79,6 +79,7 @@ export default {
           this.saveToCart();
         } else {
           this.error = true;
+          this.cartMobileToggle = true;
           setTimeout(() => {
             this.error = false;
           }, 5000);
@@ -198,12 +199,20 @@ export default {
           <div class="menu__cart-mobile">
             <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
               <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
-              <div class="dishes" v-if="false">
-                <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
-                <AppDishInsideCart v-for="n in 10"/>
-                <!-- PROVA DISH CARD -->
+              <div class="dishes" v-if="cart.length !== 0">
+                <h2 class="menu-cart__title">Il tuo ordine</h2>
+                <!--  card dentro il carrello  -->
+                <AppDishInsideCart 
+                    @adding="addOneMoreItem" @decrease="removeOneItem" 
+                    :dish="item" 
+                    v-for="item in cart" 
+                    :key="item.id"
+                  />
+                  <div class="alert" v-show="error">
+                    <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                  </div>
                 <div class="checkout-btn-mobile">
-                  <a href="#">Ordinare per 32.00 &euro;</a>
+                  <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
                 </div>
               </div>
               <AppEmptyCart v-else/>
@@ -352,6 +361,9 @@ export default {
         transition: 0.5s ease-out;
         
         .dishes {
+          .menu-cart__title {
+            text-align: center;
+          }
           .checkout-btn-mobile {
             text-align: center;
             margin: 34px 24px 14px 24px;
