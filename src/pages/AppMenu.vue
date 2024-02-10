@@ -23,7 +23,8 @@ export default {
   data() {
     return {
       restaurant: null,
-      cartMobileToggle: false
+      cartMobileToggle: false,
+      cart: []
     }
   },
 
@@ -44,11 +45,60 @@ export default {
 
     openCart() {
       this.cartMobileToggle = !this.cartMobileToggle
+    },
+
+    recoverCartItems() {
+      const storage = localStorage.getItem('cart');
+      if(storage) {
+        this.cart = JSON.parse(storage);
+      }
+    },
+
+    addToCart(obj) {
+
+      if(this.cart.length === 0) {
+        obj.quantity = 1;
+        this.cart.push(obj);
+        this.saveToCart();
+      } else {
+        if(!(this.cart.find(el => el.id === obj.id))) {
+          obj.quantity = 1;
+          this.cart.push(obj);
+          this.saveToCart();
+        }
+      }
+    },
+
+    removeOneItem(obj) {
+
+      if(obj.quantity === 1) {
+        this.removeItem(obj);
+      } else {
+        obj.quantity--;
+        this.saveToCart();
+      }
+    },
+
+    addOneMoreItem(obj) {
+      //TODO: trovare l'oggetto e aumentare la quantità di 1
+    },
+
+    removeItem(obje) {
+      this.cart = this.cart.filter((el) => el.id !== obje.id);
+      this.saveToCart();
+    },
+
+    saveToCart() {
+      localStorage.setItem('cart', JSON.stringify(this.cart));
     }
   },
 
   created() {
     this.fetchRestaurant();
+  },
+
+  mounted() {
+    this.recoverCartItems();
   },
 
   computed: {
@@ -83,11 +133,9 @@ export default {
             <!-- cart nella versione desktop -->
             <div class="menu-cart">
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
-                <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
-                <div class="dishes" v-if="true">
+                <div class="dishes" v-if="cart.length !== 0">
                   <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
-                  <AppDishInsideCart v-for="n in 5"/>
-                  <!-- PROVA DISH CARD -->
+                  <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart" :key="item.id"/>
                   <div class="checkout-btn">
                     <a href="#">Ordinare per 32.00 &euro;</a>
                   </div>
@@ -99,7 +147,7 @@ export default {
           <div class="menu__cart-mobile">
             <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
               <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
-              <div class="dishes" v-if="true">
+              <div class="dishes" v-if="false">
                 <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
                 <AppDishInsideCart v-for="n in 10"/>
                 <!-- PROVA DISH CARD -->
@@ -115,7 +163,7 @@ export default {
           </div>
           <div class="menu__list">
             <!-- start card -->
-            <AppDishCard :dish="dish" v-for="dish in dishes" :key="dish.id"/>
+            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id"/>
             <!-- end card -->
           </div>
         </div>

@@ -9,7 +9,7 @@
       <p class="dish-description">{{ dish.description }}</p>
       <div class="tools">
         <div class="price">{{ dish.price }} &euro;</div>
-        <div class="add-to-cart">
+        <div class="add-to-cart" @click="addItem(dish)">
           <img src="../../img/add.png">
         </div>
       </div>
@@ -24,6 +24,12 @@
       dish: {
         type: Object,
         required: true
+      }
+    },
+
+    methods: {
+      addItem(obj) {
+        this.$emit('add', obj);
       }
     }
   }
