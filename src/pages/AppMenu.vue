@@ -24,7 +24,9 @@ export default {
     return {
       restaurant: null,
       cartMobileToggle: false,
-      cart: []
+      cart: [],
+      currRestaurantCartId: null,
+      error: false
     }
   },
 
@@ -54,19 +56,33 @@ export default {
       }
     },
 
+    recoverRestaurantId() {
+      const currRestaurantCart = localStorage.getItem('currRestaurant');
+      if(currRestaurantCart) {
+        this.currRestaurantCartId = JSON.parse(currRestaurantCart)
+      }
+    },
+
     addToCart(obj) {
 
       if(this.cart.length === 0) {
         obj.quantity = 1;
         this.cart.push(obj);
         this.saveToCart();
-      } else {
-        if(!(this.cart.find(el => el.id === obj.id))) {
+        this.saveCurrentRestaurant(obj.restaurant_id);
+      } else if(
+          !(this.cart.find(el => el.id === obj.id))
+          && obj.restaurant_id === this.currRestaurantCartId
+          ) {
           obj.quantity = 1;
           this.cart.push(obj);
           this.saveToCart();
+        } else {
+          this.error = true;
+          setTimeout(() => {
+            this.error = false;
+          }, 5000);
         }
-      }
     },
 
     removeOneItem(obj) {
@@ -75,21 +91,39 @@ export default {
         this.removeItem(obj);
       } else {
         obj.quantity--;
+        const index = this.cart.findIndex(el => el.id === obj.id);
+        this.cart[index] = obj;
         this.saveToCart();
       }
     },
 
     addOneMoreItem(obj) {
-      //TODO: trovare l'oggetto e aumentare la quantità di 1
+      obj.quantity++;
+      const index = this.cart.findIndex(el => el.id === obj.id);
+      this.cart[index] = obj;
+      this.saveToCart();
     },
 
     removeItem(obje) {
       this.cart = this.cart.filter((el) => el.id !== obje.id);
       this.saveToCart();
+      if(this.cart.length === 0) {
+        this.emptyCart();
+      }
     },
 
     saveToCart() {
       localStorage.setItem('cart', JSON.stringify(this.cart));
+    },
+
+    saveCurrentRestaurant(rest) {
+      this.currRestaurantCartId = rest
+      localStorage.setItem('currRestaurant', JSON.stringify(rest));
+    },
+
+    emptyCart() {
+      this.currRestaurantCartId = null;
+      localStorage.removeItem('currRestaurant');
     }
   },
 
@@ -99,6 +133,7 @@ export default {
 
   mounted() {
     this.recoverCartItems();
+    this.recoverRestaurantId();
   },
 
   computed: {
@@ -109,6 +144,14 @@ export default {
     dishes() {
       return this.restaurant.dishes;
     },
+
+    totalAmount() {
+      return this.cart
+        .map((el) => {
+          return parseFloat(el.price) * el.quantity
+        })
+        .reduce((acc, currValue) => (acc + currValue), 0);
+    }
   }
 }
 </script>
@@ -124,9 +167,9 @@ export default {
         <div class="menu">
           <div class="menu__banner">
             <h1 class="name">{{ restaurant.name }}</h1>
-            <p class="address">{{ restaurant.address}}</p>
+            <p class="address">{{ restaurant.address }}</p>
             <div class="categories">
-              <span v-for="category in categories" :key="category.id">{{category.name}}</span>
+              <span v-for="category in categories" :key="category.id">{{ category.name }}</span>
             </div>
           </div>
           <div class="menu__cart-desktop-wrapper">
@@ -134,10 +177,18 @@ export default {
             <div class="menu-cart">
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
                 <div class="dishes" v-if="cart.length !== 0">
-                  <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
-                  <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart" :key="item.id"/>
+                  <!--  card dentro il carrello  -->
+                  <AppDishInsideCart 
+                    @adding="addOneMoreItem" @decrease="removeOneItem" 
+                    :dish="item" 
+                    v-for="item in cart" 
+                    :key="item.id"
+                  />
+                  <div class="alert" v-show="error">
+                    <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                  </div>
                   <div class="checkout-btn">
-                    <a href="#">Ordinare per 32.00 &euro;</a>
+                    <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
                   </div>
                 </div>
                 <AppEmptyCart v-else/>
@@ -253,6 +304,7 @@ export default {
 
         .dishes {
           .checkout-btn {
+            cursor: pointer;
             margin-top: 40px;
             text-align: center;
             @include primaryButton();
@@ -330,6 +382,14 @@ export default {
 .content .menu .menu__cart-mobile .menu__cart-mobile__wrapper.show {
   max-height: 500px;
   box-shadow: 2px 2px 8px 5px rgba(0, 0, 0, 0.5);
+}
+
+.alert {
+  text-align: center;
+  color: red;
+  a {
+    text-decoration: underline;
+  }
 }
 
 @media (min-width: 638px) {
