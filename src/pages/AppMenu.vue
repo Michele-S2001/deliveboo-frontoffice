@@ -49,6 +49,7 @@ export default {
       this.cartMobileToggle = !this.cartMobileToggle
     },
 
+    //se è salvato il carrello lo recupero dal localstorage
     recoverCartItems() {
       const storage = localStorage.getItem('cart');
       if(storage) {
@@ -56,12 +57,19 @@ export default {
       }
     },
 
+    //di consequenza se c'è il carrello, recupero l'id del ristorante al quale stiamo facendo l'ordinazione
     recoverRestaurantId() {
       const currRestaurantCart = localStorage.getItem('currRestaurant');
       if(currRestaurantCart) {
         this.currRestaurantCartId = JSON.parse(currRestaurantCart)
       }
     },
+
+    /* 
+    - Al click sul "+" del piatto aggiungo al carrello, se l'array è lunghezza 0, non faccio controlli, imposto la quantità e creo il carrello salvandolo, e memorizzo l'id del ristorante
+    - Se invece è presente qualcosa nell'array del carrello, controllo che non ci sia già quel piatto e che provenga dallo stesso ristorante 
+    - Se non dovesse rispettare le condizioni allora faccio apparire il messaggio di errore
+    */
 
     addToCart(obj) {
 
@@ -86,6 +94,11 @@ export default {
         }
     },
 
+    /*
+    - Se la quantità dell'oggetto è 1, allora lo rimuovo
+    - Se no, diminuisco la quantità e vado a sovrascrivere l'oggetto allo stesso indice in qui è presente all'interno dell'array
+    - e salvo il carrello sovrascrivendo i dati
+    */
     removeOneItem(obj) {
 
       if(obj.quantity === 1) {
@@ -98,6 +111,9 @@ export default {
       }
     },
 
+    /*
+    - Aumento di 1 la quantità, trovo l'indice, sovrascrivo l'oggetto e poi il carrello
+    */
     addOneMoreItem(obj) {
       obj.quantity++;
       const index = this.cart.findIndex(el => el.id === obj.id);
@@ -105,6 +121,9 @@ export default {
       this.saveToCart();
     },
 
+    /*
+    - se la quantità è 1 allora filtro l'array ecludendo il piatto corrispondente all'id ricevuto, sovrascrivo il carrello, se il carrello a quel punto è vuoto, l'array sarà vuoto e rimuoverò anche l'id del ristorante salvato 
+    */
     removeItem(obje) {
       this.cart = this.cart.filter((el) => el.id !== obje.id);
       this.saveToCart();
@@ -113,15 +132,24 @@ export default {
       }
     },
 
+    /* 
+    - ogni volta che un elemento si aggiunge o si toglie, qui l'array viene sovrascritto nel localStorage
+    */
     saveToCart() {
       localStorage.setItem('cart', JSON.stringify(this.cart));
     },
 
+    /* 
+    - al primo piatto aggiunto qui viene salvato anche il risturante da cui proviene
+    */
     saveCurrentRestaurant(rest) {
       this.currRestaurantCartId = rest
       localStorage.setItem('currRestaurant', JSON.stringify(rest));
     },
 
+    /*
+    - in caso il carrello sia vuoto, togli l'id del ristorante
+    */
     emptyCart() {
       this.currRestaurantCartId = null;
       localStorage.removeItem('currRestaurant');
@@ -133,6 +161,9 @@ export default {
   },
 
   mounted() {
+    /* 
+    - Se è presente già un carrello, recupera questo e l'id del ristorante associato
+    */
     this.recoverCartItems();
     this.recoverRestaurantId();
   },
@@ -198,7 +229,7 @@ export default {
           <!-- cart nella versione mobile -->
           <div class="menu__cart-mobile">
             <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
-              <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
+              <!-- TODO: Pensare di fare un componente cart ? -->
               <div class="dishes" v-if="cart.length !== 0">
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
                 <!--  card dentro il carrello  -->
