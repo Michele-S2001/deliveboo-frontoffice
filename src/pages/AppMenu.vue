@@ -40,8 +40,7 @@ export default {
         })
         .catch((error) => {
           if (error.response.status === 404) {
-            //this.$router.push({ name: 'not-found'}); 
-            //TODO: Pagina not found 
+            this.$router.push({ name: 'notFound' });
           }
         })
     },
@@ -53,7 +52,7 @@ export default {
     //se è salvato il carrello lo recupero dal localstorage
     recoverCartItems() {
       const storage = localStorage.getItem('cart');
-      if(storage) {
+      if (storage) {
         this.cart = JSON.parse(storage);
       }
     },
@@ -61,14 +60,14 @@ export default {
     //di consequenza se c'è il carrello, recupero l'id del ristorante al quale stiamo facendo l'ordinazione
     recoverRestaurantId() {
       const currRestaurantCart = localStorage.getItem('currRestaurant');
-      if(currRestaurantCart) {
+      if (currRestaurantCart) {
         this.currRestaurantCartId = JSON.parse(currRestaurantCart)
       }
     },
 
     recoverRestaurantSlug() {
       const currRestaurantCartSlug = localStorage.getItem('currRestaurantSlug');
-      if(currRestaurantCartSlug) {
+      if (currRestaurantCartSlug) {
         this.currRestaurantCartSlug = JSON.parse(currRestaurantCartSlug);
       }
     },
@@ -81,26 +80,26 @@ export default {
 
     addToCart(obj) {
 
-      if(this.cart.length === 0) {
+      if (this.cart.length === 0) {
         obj.quantity = 1;
         this.cart.push(obj);
         this.saveToCart();
         this.saveCurrentRestaurant(obj.restaurant_id);
         this.saveCurrRestaurantSlug();
-      } else if(
-          !(this.cart.find(el => el.id === obj.id))
-          && obj.restaurant_id === this.currRestaurantCartId
-          ) {
-          obj.quantity = 1;
-          this.cart.push(obj);
-          this.saveToCart();
-        } else {
-          this.error = true;
-          this.cartMobileToggle = true;
-          setTimeout(() => {
-            this.error = false;
-          }, 8000);
-        }
+      } else if (
+        !(this.cart.find(el => el.id === obj.id))
+        && obj.restaurant_id === this.currRestaurantCartId
+      ) {
+        obj.quantity = 1;
+        this.cart.push(obj);
+        this.saveToCart();
+      } else {
+        this.error = true;
+        this.cartMobileToggle = true;
+        setTimeout(() => {
+          this.error = false;
+        }, 8000);
+      }
     },
 
     /*
@@ -110,7 +109,7 @@ export default {
     */
     removeOneItem(obj) {
 
-      if(obj.quantity === 1) {
+      if (obj.quantity === 1) {
         this.removeItem(obj);
       } else {
         obj.quantity--;
@@ -136,7 +135,7 @@ export default {
     removeItem(obje) {
       this.cart = this.cart.filter((el) => el.id !== obje.id);
       this.saveToCart();
-      if(this.cart.length === 0) {
+      if (this.cart.length === 0) {
         this.emptyCart();
       }
     },
@@ -166,13 +165,13 @@ export default {
     */
     emptyCart() {
       this.currRestaurantCartSlug = null,
-      this.currRestaurantCartId = null;
+        this.currRestaurantCartId = null;
       localStorage.removeItem('currRestaurant');
       localStorage.removeItem('currRestaurantSlug');
     },
 
     checkIfItemIsInCart(itemId) {
-      if(this.cart) {
+      if (this.cart) {
         return !(this.cart.some(el => el.id === itemId));
       }
     }
@@ -230,51 +229,43 @@ export default {
           <div class="menu__cart-desktop-wrapper">
             <!-- cart nella versione desktop -->
             <div class="menu-cart">
-                <h2 class="menu-cart__title">Il tuo ordine</h2>
-                <div class="dishes" v-if="cart.length !== 0">
-                  <!--  card dentro il carrello  -->
-                  <AppDishInsideCart 
-                    @adding="addOneMoreItem" @decrease="removeOneItem" 
-                    :dish="item" 
-                    v-for="item in cart" 
-                    :key="item.id"
-                  />
-                  <div class="alert" v-show="error">
-                    <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
-                    <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug }}">
-                      Torna al ristorante
-                    </router-link>
-                  </div>
-                  <div class="checkout-btn">
-                    <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
-                  </div>
+              <h2 class="menu-cart__title">Il tuo ordine</h2>
+              <div class="dishes" v-if="cart.length !== 0">
+                <!--  card dentro il carrello  -->
+                <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart"
+                  :key="item.id" />
+                <div class="alert" v-show="error">
+                  <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                  <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug } }">
+                    Torna al ristorante
+                  </router-link>
                 </div>
-                <AppEmptyCart v-else/>
+                <div class="checkout-btn">
+                  <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
+                </div>
+              </div>
+              <AppEmptyCart v-else />
             </div>
           </div>
           <!-- cart nella versione mobile -->
           <div class="menu__cart-mobile">
-            <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
+            <div class="menu__cart-mobile__wrapper" :class="[cartMobileToggle ? 'show' : '']">
               <div class="dishes" v-if="cart.length !== 0">
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
                 <!--  card dentro il carrello  -->
-                <AppDishInsideCart 
-                    @adding="addOneMoreItem" @decrease="removeOneItem" 
-                    :dish="item" 
-                    v-for="item in cart" 
-                    :key="item.id"
-                  />
-                  <div class="alert" v-show="error">
-                    <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
-                    <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug }}">
-                      Torna al ristorante
-                    </router-link>
-                  </div>
+                <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart"
+                  :key="item.id" />
+                <div class="alert" v-show="error">
+                  <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                  <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug } }">
+                    Torna al ristorante
+                  </router-link>
+                </div>
                 <div class="checkout-btn-mobile">
                   <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
                 </div>
               </div>
-              <AppEmptyCart v-else/>
+              <AppEmptyCart v-else />
             </div>
             <div class="menu__cart-mobile__button" @click="openCart()">
               Carrello
@@ -282,7 +273,8 @@ export default {
           </div>
           <div class="menu__list">
             <!-- start card -->
-            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id" :isInCart="checkIfItemIsInCart(dish.id)"/>
+            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id"
+              :isInCart="checkIfItemIsInCart(dish.id)" />
             <!-- end card -->
           </div>
         </div>
@@ -295,6 +287,7 @@ export default {
 <style lang="scss" scoped>
 @use '../styles/partials/variables' as *;
 @use '../styles/partials/mixins' as *;
+
 .restaurant-window {
   background-repeat: no-repeat;
   background-size: cover;
@@ -322,7 +315,7 @@ export default {
     position: relative;
     z-index: 90;
     display: grid;
-    grid-template-areas: 
+    grid-template-areas:
       "banner"
       "body"
       "cart";
@@ -337,15 +330,16 @@ export default {
       padding: 20px;
       grid-area: banner;
       border-radius: 20px 60px 20px 20px;
-      box-shadow: 5px 5px 12px 5px rgba(0,0,0,0.2);
+      box-shadow: 5px 5px 12px 5px rgba(0, 0, 0, 0.2);
 
       .name {
         margin-bottom: 24px;
       }
 
-      .address { 
+      .address {
         margin-bottom: 16px;
       }
+
       .categories {
         display: flex;
         gap: 15px;
@@ -356,9 +350,10 @@ export default {
     &__cart-desktop-wrapper {
       display: none;
       position: relative;
+
       .menu-cart {
         background-color: $white;
-        box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.44);
+        box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.44);
         border-radius: 20px;
         padding: 10px;
         max-height: 500px;
@@ -376,6 +371,7 @@ export default {
             margin-top: 40px;
             text-align: center;
             @include primaryButton();
+
             &:hover {
               background-color: $lightGreen;
             }
@@ -386,7 +382,7 @@ export default {
 
     //cart vista mobile
     &__cart-mobile {
-      position: fixed;  
+      position: fixed;
       bottom: 20px;
       left: 0;
       right: 0;
@@ -407,6 +403,7 @@ export default {
         border-radius: 20px;
         background-color: $green;
         user-select: none;
+
         &:hover {
           background-color: $lightGreen;
         }
@@ -418,20 +415,23 @@ export default {
         overflow: auto;
         border-radius: 20px;
         transition: 0.5s ease-out;
-        
+
         .dishes {
           .menu-cart__title {
             text-align: center;
           }
+
           .checkout-btn-mobile {
             text-align: center;
             margin: 34px 24px 14px 24px;
             @include primaryButton();
+
             &:hover {
               background-color: $lightGreen;
             }
           }
         }
+
         .dishes {
           display: flex;
           flex-direction: column;
@@ -458,6 +458,7 @@ export default {
 .alert {
   text-align: center;
   color: red;
+
   a {
     text-decoration: underline;
   }
@@ -476,7 +477,7 @@ export default {
 @media (min-width: 1000px) {
   .content {
     .menu {
-      grid-template-areas: 
+      grid-template-areas:
         "banner cart"
         "body cart";
       grid-template-columns: 1fr 380px;
@@ -485,6 +486,7 @@ export default {
         grid-area: cart;
         display: block;
         position: relative;
+
         .menu-cart {
           top: 20px;
           position: sticky;
@@ -498,5 +500,4 @@ export default {
     }
   }
 }
-
 </style>
