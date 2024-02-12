@@ -26,6 +26,7 @@ export default {
       cartMobileToggle: false,
       cart: [],
       currRestaurantCartId: null,
+      currRestaurantCartSlug: null,
       error: false
     }
   },
@@ -65,6 +66,13 @@ export default {
       }
     },
 
+    recoverRestaurantSlug() {
+      const currRestaurantCartSlug = localStorage.getItem('currRestaurantSlug');
+      if(currRestaurantCartSlug) {
+        this.currRestaurantCartSlug = JSON.parse(currRestaurantCartSlug);
+      }
+    },
+
     /* 
     - Al click sul "+" del piatto aggiungo al carrello, se l'array è lunghezza 0, non faccio controlli, imposto la quantità e creo il carrello salvandolo, e memorizzo l'id del ristorante
     - Se invece è presente qualcosa nell'array del carrello, controllo che non ci sia già quel piatto e che provenga dallo stesso ristorante 
@@ -78,6 +86,7 @@ export default {
         this.cart.push(obj);
         this.saveToCart();
         this.saveCurrentRestaurant(obj.restaurant_id);
+        this.saveCurrRestaurantSlug();
       } else if(
           !(this.cart.find(el => el.id === obj.id))
           && obj.restaurant_id === this.currRestaurantCartId
@@ -90,7 +99,7 @@ export default {
           this.cartMobileToggle = true;
           setTimeout(() => {
             this.error = false;
-          }, 5000);
+          }, 8000);
         }
     },
 
@@ -147,12 +156,19 @@ export default {
       localStorage.setItem('currRestaurant', JSON.stringify(rest));
     },
 
+    saveCurrRestaurantSlug() {
+      this.currRestaurantCartSlug = this.slug;
+      localStorage.setItem('currRestaurantSlug', JSON.stringify(this.slug));
+    },
+
     /*
     - in caso il carrello sia vuoto, togli l'id del ristorante
     */
     emptyCart() {
+      this.currRestaurantCartSlug = null,
       this.currRestaurantCartId = null;
       localStorage.removeItem('currRestaurant');
+      localStorage.removeItem('currRestaurantSlug');
     },
 
     checkIfItemIsInCart(itemId) {
@@ -172,6 +188,7 @@ export default {
     */
     this.recoverCartItems();
     this.recoverRestaurantId();
+    this.recoverRestaurantSlug();
   },
 
   computed: {
@@ -224,6 +241,9 @@ export default {
                   />
                   <div class="alert" v-show="error">
                     <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                    <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug }}">
+                      Torna al ristorante
+                    </router-link>
                   </div>
                   <div class="checkout-btn">
                     <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
@@ -235,7 +255,6 @@ export default {
           <!-- cart nella versione mobile -->
           <div class="menu__cart-mobile">
             <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
-              <!-- TODO: Pensare di fare un componente cart ? -->
               <div class="dishes" v-if="cart.length !== 0">
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
                 <!--  card dentro il carrello  -->
@@ -247,6 +266,9 @@ export default {
                   />
                   <div class="alert" v-show="error">
                     <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                    <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug }}">
+                      Torna al ristorante
+                    </router-link>
                   </div>
                 <div class="checkout-btn-mobile">
                   <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
