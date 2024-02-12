@@ -164,8 +164,8 @@ export default {
     - in caso il carrello sia vuoto, togli l'id del ristorante
     */
     emptyCart() {
-      this.currRestaurantCartSlug = null,
-        this.currRestaurantCartId = null;
+      this.currRestaurantCartSlug = null;
+      this.currRestaurantCartId = null;
       localStorage.removeItem('currRestaurant');
       localStorage.removeItem('currRestaurantSlug');
     },
