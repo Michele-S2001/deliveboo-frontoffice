@@ -9,8 +9,11 @@
       <p class="dish-description">{{ dish.description }}</p>
       <div class="tools">
         <div class="price">{{ dish.price }} &euro;</div>
-        <div class="add-to-cart">
+        <div class="add-to-cart" @click="addItem(dish)" v-if="isInCart">
           <img src="../../img/add.png">
+        </div>
+        <div class="already-in" v-else>
+          <img src="../../img/prohibition.png">
         </div>
       </div>
     </div>
@@ -24,6 +27,16 @@
       dish: {
         type: Object,
         required: true
+      },
+      isInCart: {
+        type: Boolean,
+        required: true
+      }
+    },
+
+    methods: {
+      addItem(obj) {
+        this.$emit('add', obj);
       }
     }
   }

@@ -23,7 +23,11 @@ export default {
   data() {
     return {
       restaurant: null,
-      cartMobileToggle: false
+      cartMobileToggle: false,
+      cart: [],
+      currRestaurantCartId: null,
+      currRestaurantCartSlug: null,
+      error: false
     }
   },
 
@@ -44,11 +48,147 @@ export default {
 
     openCart() {
       this.cartMobileToggle = !this.cartMobileToggle
+    },
+
+    //se è salvato il carrello lo recupero dal localstorage
+    recoverCartItems() {
+      const storage = localStorage.getItem('cart');
+      if(storage) {
+        this.cart = JSON.parse(storage);
+      }
+    },
+
+    //di consequenza se c'è il carrello, recupero l'id del ristorante al quale stiamo facendo l'ordinazione
+    recoverRestaurantId() {
+      const currRestaurantCart = localStorage.getItem('currRestaurant');
+      if(currRestaurantCart) {
+        this.currRestaurantCartId = JSON.parse(currRestaurantCart)
+      }
+    },
+
+    recoverRestaurantSlug() {
+      const currRestaurantCartSlug = localStorage.getItem('currRestaurantSlug');
+      if(currRestaurantCartSlug) {
+        this.currRestaurantCartSlug = JSON.parse(currRestaurantCartSlug);
+      }
+    },
+
+    /* 
+    - Al click sul "+" del piatto aggiungo al carrello, se l'array è lunghezza 0, non faccio controlli, imposto la quantità e creo il carrello salvandolo, e memorizzo l'id del ristorante
+    - Se invece è presente qualcosa nell'array del carrello, controllo che non ci sia già quel piatto e che provenga dallo stesso ristorante 
+    - Se non dovesse rispettare le condizioni allora faccio apparire il messaggio di errore
+    */
+
+    addToCart(obj) {
+
+      if(this.cart.length === 0) {
+        obj.quantity = 1;
+        this.cart.push(obj);
+        this.saveToCart();
+        this.saveCurrentRestaurant(obj.restaurant_id);
+        this.saveCurrRestaurantSlug();
+      } else if(
+          !(this.cart.find(el => el.id === obj.id))
+          && obj.restaurant_id === this.currRestaurantCartId
+          ) {
+          obj.quantity = 1;
+          this.cart.push(obj);
+          this.saveToCart();
+        } else {
+          this.error = true;
+          this.cartMobileToggle = true;
+          setTimeout(() => {
+            this.error = false;
+          }, 8000);
+        }
+    },
+
+    /*
+    - Se la quantità dell'oggetto è 1, allora lo rimuovo
+    - Se no, diminuisco la quantità e vado a sovrascrivere l'oggetto allo stesso indice in qui è presente all'interno dell'array
+    - e salvo il carrello sovrascrivendo i dati
+    */
+    removeOneItem(obj) {
+
+      if(obj.quantity === 1) {
+        this.removeItem(obj);
+      } else {
+        obj.quantity--;
+        const index = this.cart.findIndex(el => el.id === obj.id);
+        this.cart[index] = obj;
+        this.saveToCart();
+      }
+    },
+
+    /*
+    - Aumento di 1 la quantità, trovo l'indice, sovrascrivo l'oggetto e poi il carrello
+    */
+    addOneMoreItem(obj) {
+      obj.quantity++;
+      const index = this.cart.findIndex(el => el.id === obj.id);
+      this.cart[index] = obj;
+      this.saveToCart();
+    },
+
+    /*
+    - se la quantità è 1 allora filtro l'array ecludendo il piatto corrispondente all'id ricevuto, sovrascrivo il carrello, se il carrello a quel punto è vuoto, l'array sarà vuoto e rimuoverò anche l'id del ristorante salvato 
+    */
+    removeItem(obje) {
+      this.cart = this.cart.filter((el) => el.id !== obje.id);
+      this.saveToCart();
+      if(this.cart.length === 0) {
+        this.emptyCart();
+      }
+    },
+
+    /* 
+    - ogni volta che un elemento si aggiunge o si toglie, qui l'array viene sovrascritto nel localStorage
+    */
+    saveToCart() {
+      localStorage.setItem('cart', JSON.stringify(this.cart));
+    },
+
+    /* 
+    - al primo piatto aggiunto qui viene salvato anche il risturante da cui proviene
+    */
+    saveCurrentRestaurant(rest) {
+      this.currRestaurantCartId = rest
+      localStorage.setItem('currRestaurant', JSON.stringify(rest));
+    },
+
+    saveCurrRestaurantSlug() {
+      this.currRestaurantCartSlug = this.slug;
+      localStorage.setItem('currRestaurantSlug', JSON.stringify(this.slug));
+    },
+
+    /*
+    - in caso il carrello sia vuoto, togli l'id del ristorante
+    */
+    emptyCart() {
+      this.currRestaurantCartSlug = null,
+      this.currRestaurantCartId = null;
+      localStorage.removeItem('currRestaurant');
+      localStorage.removeItem('currRestaurantSlug');
+    },
+
+    checkIfItemIsInCart(itemId) {
+      if(this.cart) {
+        return !(this.cart.some(el => el.id === itemId));
+      }
     }
   },
 
   created() {
     this.fetchRestaurant();
+  },
+
+  mounted() {
+    /* 
+    - Se è presente già un carrello, recupera questo e l'id del ristorante associato
+    */
+    this.recoverCartItems();
+    this.recoverRestaurantId();
+    this.recoverRestaurantSlug();
   },
 
   computed: {
@@ -59,6 +199,14 @@ export default {
     dishes() {
       return this.restaurant.dishes;
     },
+
+    totalAmount() {
+      return this.cart
+        .map((el) => {
+          return parseFloat(el.price) * el.quantity
+        })
+        .reduce((acc, currValue) => (acc + currValue), 0);
+    }
   }
 }
 </script>
@@ -74,22 +222,31 @@ export default {
         <div class="menu">
           <div class="menu__banner">
             <h1 class="name">{{ restaurant.name }}</h1>
-            <p class="address">{{ restaurant.address}}</p>
+            <p class="address">{{ restaurant.address }}</p>
             <div class="categories">
-              <span v-for="category in categories" :key="category.id">{{category.name}}</span>
+              <span v-for="category in categories" :key="category.id">{{ category.name }}</span>
             </div>
           </div>
           <div class="menu__cart-desktop-wrapper">
             <!-- cart nella versione desktop -->
             <div class="menu-cart">
                 <h2 class="menu-cart__title">Il tuo ordine</h2>
-                <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
-                <div class="dishes" v-if="true">
-                  <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
-                  <AppDishInsideCart v-for="n in 5"/>
-                  <!-- PROVA DISH CARD -->
+                <div class="dishes" v-if="cart.length !== 0">
+                  <!--  card dentro il carrello  -->
+                  <AppDishInsideCart 
+                    @adding="addOneMoreItem" @decrease="removeOneItem" 
+                    :dish="item" 
+                    v-for="item in cart" 
+                    :key="item.id"
+                  />
+                  <div class="alert" v-show="error">
+                    <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                    <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug }}">
+                      Torna al ristorante
+                    </router-link>
+                  </div>
                   <div class="checkout-btn">
-                    <a href="#">Ordinare per 32.00 &euro;</a>
+                    <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
                   </div>
                 </div>
                 <AppEmptyCart v-else/>
@@ -98,13 +255,23 @@ export default {
           <!-- cart nella versione mobile -->
           <div class="menu__cart-mobile">
             <div class="menu__cart-mobile__wrapper" :class="[ cartMobileToggle ? 'show' : '']">
-              <!-- TODO: TOGLIERE IL TRUE NEL V-IF -->
-              <div class="dishes" v-if="true">
-                <!-- FIXME: PROVA DISH CARD - DA RIMUOVERE QUESTE STATICHE -->
-                <AppDishInsideCart v-for="n in 10"/>
-                <!-- PROVA DISH CARD -->
+              <div class="dishes" v-if="cart.length !== 0">
+                <h2 class="menu-cart__title">Il tuo ordine</h2>
+                <!--  card dentro il carrello  -->
+                <AppDishInsideCart 
+                    @adding="addOneMoreItem" @decrease="removeOneItem" 
+                    :dish="item" 
+                    v-for="item in cart" 
+                    :key="item.id"
+                  />
+                  <div class="alert" v-show="error">
+                    <p>ATTENZIONE! Puoi ordinare da un solo ristorante alla volta</p>
+                    <router-link :to="{ name: 'menu', params: { slug: currRestaurantCartSlug }}">
+                      Torna al ristorante
+                    </router-link>
+                  </div>
                 <div class="checkout-btn-mobile">
-                  <a href="#">Ordinare per 32.00 &euro;</a>
+                  <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
                 </div>
               </div>
               <AppEmptyCart v-else/>
@@ -115,7 +282,7 @@ export default {
           </div>
           <div class="menu__list">
             <!-- start card -->
-            <AppDishCard :dish="dish" v-for="dish in dishes" :key="dish.id"/>
+            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id" :isInCart="checkIfItemIsInCart(dish.id)"/>
             <!-- end card -->
           </div>
         </div>
@@ -205,6 +372,7 @@ export default {
 
         .dishes {
           .checkout-btn {
+            cursor: pointer;
             margin-top: 40px;
             text-align: center;
             @include primaryButton();
@@ -252,6 +420,9 @@ export default {
         transition: 0.5s ease-out;
         
         .dishes {
+          .menu-cart__title {
+            text-align: center;
+          }
           .checkout-btn-mobile {
             text-align: center;
             margin: 34px 24px 14px 24px;
@@ -282,6 +453,14 @@ export default {
 .content .menu .menu__cart-mobile .menu__cart-mobile__wrapper.show {
   max-height: 500px;
   box-shadow: 2px 2px 8px 5px rgba(0, 0, 0, 0.5);
+}
+
+.alert {
+  text-align: center;
+  color: red;
+  a {
+    text-decoration: underline;
+  }
 }
 
 @media (min-width: 638px) {

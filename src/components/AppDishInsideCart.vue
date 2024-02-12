@@ -2,21 +2,35 @@
   <div class="dish-in-cart">
     <div class="dish-in-cart__top">
       <div class="name-and-quantity">
-        <h4 class="dish-name">Pasta alla carbonara</h4>
-        <span class="quantity-per-dish">4x</span>
+        <h4 class="dish-name">{{ dish.name }}</h4>
+        <span class="quantity-per-dish">{{ dish.quantity }}x</span>
       </div>
-      <div class="price">16.00 &euro;</div>
+      <div class="price">{{ dish.price }} &euro;</div>
     </div>
     <div class="dish-in-cart__bottom">
-      <img class="action action--add" src="../../img/plus.png">
-      <img class="action action--detuct" src="../../img/minus-sign.png">
+      <img @click="add(dish)" class="action action--add" src="../../img/plus.png">
+      <img @click="remove(dish)" class="action action--detuct" src="../../img/minus-sign.png">
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    
+    props: {
+      dish: {
+        type: Object,
+        required: true
+      }
+    },
+
+    methods: {
+      remove(obj) {
+        this.$emit('decrease', obj);
+      },
+      add(obj) {
+        this.$emit('adding', obj);
+      }
+    }
   }
 </script>
 
