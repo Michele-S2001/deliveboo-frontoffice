@@ -153,6 +153,12 @@ export default {
     emptyCart() {
       this.currRestaurantCartId = null;
       localStorage.removeItem('currRestaurant');
+    },
+
+    checkIfItemIsInCart(itemId) {
+      if(this.cart) {
+        return !(this.cart.some(el => el.id === itemId));
+      }
     }
   },
 
@@ -254,7 +260,7 @@ export default {
           </div>
           <div class="menu__list">
             <!-- start card -->
-            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id"/>
+            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id" :isInCart="checkIfItemIsInCart(dish.id)"/>
             <!-- end card -->
           </div>
         </div>
