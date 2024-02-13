@@ -273,8 +273,10 @@ export default {
           </div>
           <div class="menu__list">
             <!-- start card -->
-            <AppDishCard @add="addToCart" :dish="dish" v-for="dish in dishes" :key="dish.id"
-              :isInCart="checkIfItemIsInCart(dish.id)" />
+            <div v-for="dish in dishes" :key="dish.id">
+              <AppDishCard @add="addToCart" :dish="dish"  
+                :isInCart="checkIfItemIsInCart(dish.id)" v-if="dish.visibility"/>
+            </div>
             <!-- end card -->
           </div>
         </div>
