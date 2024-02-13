@@ -13,7 +13,6 @@ const router = createRouter({
       name: 'home',
       component: AppHome
     },
-
     {
       path: '/menu/:slug',
       name: 'menu',
@@ -21,8 +20,8 @@ const router = createRouter({
       component: AppMenu
     },
     {
-      path: '/cart',
-      name: 'cart',
+      path: '/payment',
+      name: 'payment',
       component: AppCart
     },
     {

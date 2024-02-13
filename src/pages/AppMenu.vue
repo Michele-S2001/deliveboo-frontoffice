@@ -241,7 +241,7 @@ export default {
                   </router-link>
                 </div>
                 <div class="checkout-btn">
-                  <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
+                  <router-link :to="{ name: 'payment'}">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</router-link>
                 </div>
               </div>
               <AppEmptyCart v-else />
@@ -262,7 +262,7 @@ export default {
                   </router-link>
                 </div>
                 <div class="checkout-btn-mobile">
-                  <a href="#">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</a>
+                  <router-link :to="{ name: 'payment'}">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</router-link>
                 </div>
               </div>
               <AppEmptyCart v-else />
