@@ -166,6 +166,8 @@ export default {
     emptyCart() {
       this.currRestaurantCartSlug = null;
       this.currRestaurantCartId = null;
+      this.cart = [];
+      this.saveToCart();
       localStorage.removeItem('currRestaurant');
       localStorage.removeItem('currRestaurantSlug');
     },
@@ -230,7 +232,9 @@ export default {
             <!-- cart nella versione desktop -->
             <div class="menu-cart">
               <h2 class="menu-cart__title">Il tuo ordine</h2>
+              
               <div class="dishes" v-if="cart.length !== 0">
+                <div @click="emptyCart" class="empty-all"><span>Svuota tutto</span> <img src="../../img/trash-can.png"/></div>
                 <!--  card dentro il carrello  -->
                 <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart"
                   :key="item.id" />
@@ -250,8 +254,8 @@ export default {
           <!-- cart nella versione mobile -->
           <div class="menu__cart-mobile">
             <div class="menu__cart-mobile__wrapper" :class="[cartMobileToggle ? 'show' : '']">
+              <h2>Il tuo ordine</h2>
               <div class="dishes" v-if="cart.length !== 0">
-                <h2 class="menu-cart__title">Il tuo ordine</h2>
                 <!--  card dentro il carrello  -->
                 <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart"
                   :key="item.id" />
@@ -361,6 +365,24 @@ export default {
         max-height: 500px;
         overflow: auto;
 
+        .empty-all {
+          justify-content: end;
+          gap: 10px;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+
+          span {
+            font-size: 16px;
+          }
+
+          &:hover {
+            span {
+              text-decoration: underline;
+            }
+          }
+        }
+
         &__title {
           text-align: center;
           margin-bottom: 34px;
@@ -418,11 +440,11 @@ export default {
         border-radius: 20px;
         transition: 0.5s ease-out;
 
-        .dishes {
-          .menu-cart__title {
-            text-align: center;
-          }
+        h2 {
+          text-align: center;
+        }
 
+        .dishes {
           .checkout-btn-mobile {
             text-align: center;
             margin: 34px 24px 14px 24px;
