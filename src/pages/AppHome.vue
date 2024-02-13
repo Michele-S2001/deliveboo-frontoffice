@@ -248,6 +248,7 @@ export default {
   .pages {
     padding: 20px 0;
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
     .page-number {
