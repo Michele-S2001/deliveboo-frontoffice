@@ -53,6 +53,20 @@ export default {
 
     changePage(i) {
       this.currPage = i;
+    },
+
+    scrollToRestaurants() {
+      const targetElement = document.getElementById('restaurant-list');
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+
+    scrollToFilters() {
+      const targetElement = document.getElementById('filters');
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   },
 
@@ -98,11 +112,11 @@ export default {
       <!-- search section -->
       <section class="search px-10">
         <div class="container">
-          <h2>Clicca per filtrare secondo i tuoi gusti !</h2>
+          <h2 id="filters">Clicca per filtrare secondo i tuoi gusti !</h2>
           <!-- recuperiamo il numero di ristoranti per categorie -->
           <h4>Totale risultati: {{ totalResults }}</h4>
           <button class="button">
-            <a href="#restaurant-list">Vai alla lista</a>
+            <a @click="scrollToRestaurants">Vai alla lista</a>
           </button>
           <!-- filtri delle categorie ristorante -->
           <div v-if="!(categories.length === 0)" class="wrapper">
@@ -127,10 +141,13 @@ export default {
         <div class="container">
           <h1 id="restaurant-list" class="px-10 mb-15">I tuoi ristoranti:</h1>
           <div class="restaurants">
-            <AppRestaurantCard v-for="restaurant in restaurants" :currRestaurant="restaurant" :key="restaurant.id"/>
+            <AppRestaurantCard class="res-card" v-for="restaurant in restaurants" :currRestaurant="restaurant" :key="restaurant.id"/>
           </div>
           <div class="pages">
             <span class="page-number" @click="changePage(n)" v-for="n in lastPage" :key="n">{{ n }}</span>
+          </div>
+          <div class="back-to-filter">
+            <a @click="scrollToFilters">Torna ai filtri</a>
           </div>
         </div>
       </section>
@@ -173,7 +190,7 @@ export default {
 
 .search {
   background-color: $orange;
-  padding-top: 80px;
+  padding-top: 50px;
 
   h2, h4 {
     text-align: center;
@@ -243,8 +260,33 @@ export default {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 40px;
+
+    .res-card {
+      transition: 200ms ease-in;
+    }
+    &:has(.res-card:hover) .res-card:not(:hover) {
+      filter: grayscale(80%) brightness(50%);
+      transform: scale(0.95);
+    }
   }
 
+  .back-to-filter {
+    text-align: center;
+    cursor: pointer;
+    a {
+      color: $white;
+      display: inline-block;
+      background-color: $darkOrange;
+      padding: 0 30px;
+      line-height: 40px;
+      border-radius: 20px;
+      font-weight: 600;
+
+      &:hover {
+        background-color: $orange;
+      }
+    }
+  }
   .pages {
     padding: 20px 0;
     display: flex;
