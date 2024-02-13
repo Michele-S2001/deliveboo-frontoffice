@@ -32,8 +32,7 @@ export default {
           <img class="navbar__logo" src="/img/logo.png" alt="logo">
         </router-link>
         <div class="navbar__access-group ">
-          <a class="display_none" href="http://127.0.0.1:8000/login">Accedi</a>
-          <a class="display_none" href="http://127.0.0.1:8000/register">Registrati</a>
+          <a class="display_none" href="http://127.0.0.1:8000/">Area ristoratore</a>
         </div>
         <button class="display-none-button" @click="BurgerToggle">
           <span>
@@ -41,8 +40,7 @@ export default {
           </span>
         </button>
         <div class="navbar__access-group burger-links" v-show="Burger && isMobileViewport">
-          <a href="http://127.0.0.1:8000/login">Accedi</a>
-          <a href="http://127.0.0.1:8000/register">Registrati</a>
+          <a href="http://127.0.0.1:8000/">Area ristoratore</a>
         </div>
       </nav>
     </div>
