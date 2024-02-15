@@ -256,6 +256,7 @@ export default {
             <div class="menu__cart-mobile__wrapper" :class="[cartMobileToggle ? 'show' : '']">
               <h2>Il tuo ordine</h2>
               <div class="dishes" v-if="cart.length !== 0">
+                <div @click="emptyCart" class="empty-all"><span>Svuota tutto</span> <img src="../../img/trash-can.png"/></div>
                 <!--  card dentro il carrello  -->
                 <AppDishInsideCart @adding="addOneMoreItem" @decrease="removeOneItem" :dish="item" v-for="item in cart"
                   :key="item.id" />
@@ -365,24 +366,6 @@ export default {
         max-height: 500px;
         overflow: auto;
 
-        .empty-all {
-          justify-content: end;
-          gap: 10px;
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-
-          span {
-            font-size: 16px;
-          }
-
-          &:hover {
-            span {
-              text-decoration: underline;
-            }
-          }
-        }
-
         &__title {
           text-align: center;
           margin-bottom: 34px;
@@ -477,6 +460,25 @@ export default {
 .content .menu .menu__cart-mobile .menu__cart-mobile__wrapper.show {
   max-height: 500px;
   box-shadow: 2px 2px 8px 5px rgba(0, 0, 0, 0.5);
+}
+
+.empty-all {
+  justify-content: end;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 10px;
+
+  span {
+    font-size: 16px;
+  }
+
+  &:hover {
+    span {
+      text-decoration: underline;
+    }
+  }
 }
 
 .alert {
