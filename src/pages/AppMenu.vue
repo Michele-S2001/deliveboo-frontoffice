@@ -282,6 +282,9 @@ export default {
               <AppDishCard @add="addToCart" :dish="dish"  
                 :isInCart="checkIfItemIsInCart(dish.id)" v-if="dish.visibility"/>
             </div>
+            <div v-if="dishes.length === 0" class="zero-dishes">
+              <h3>Al momento non ci sono piatti disponibili</h3>
+            </div>
             <!-- end card -->
           </div>
         </div>
@@ -453,6 +456,11 @@ export default {
       display: grid;
       grid-template-columns: 1fr;
       gap: 20px;
+
+      .zero-dishes {
+        margin-top: 40px;
+        text-align: center;
+      }
     }
   }
 }
