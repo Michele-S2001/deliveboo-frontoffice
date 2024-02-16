@@ -114,9 +114,25 @@ export default {
 
 <template>
   <DefaultLayout>
-    <div class="container">
+    <div class="container payment_form">
       <div id="dropin-container"></div>
       <button id="submit-button" class="button button--small button--green">Purchase</button>
+    </div>
+    
+    <div class="container">
+      <h3>Riepilogo Ordine</h3>
+      <div v-for="dish in cart" :key="dish.id" class="summary_cart">
+        <div class="price">
+          <span>{{ dish.name }}</span>
+          <span>{{ dish.price }} &euro;</span>
+        </div>
+        <div class="quantity">
+          <span>x {{ dish.quantity }}</span>
+        </div>
+      </div>
+      <div class="total_price">
+        Totale: {{ totalAmount.toFixed(2) }}
+      </div>
     </div>
   </DefaultLayout>
 </template>
@@ -157,6 +173,36 @@ export default {
   color: white;
 }
 
+.summary_cart {
+  max-width: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  border-bottom: 2px solid $lightGreen;
+  border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 5px;
+
+  .price {
+    display: flex;
+    width: 60%;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+}
+
+.total_price {
+  margin-top: 10px;
+  padding-left: 10px;
+}
+
+.payment_form {
+  margin-bottom: 50px;
+}
+
+
 
 @media (max-width: 768px) {
   .row {
@@ -181,6 +227,13 @@ export default {
 
   .dish_name {
     width: 75%;
+  }
+
+  .summary_cart {
+    max-width: 100%;
+    .price {
+      width: 80%;
+    }
   }
 }
 </style>
