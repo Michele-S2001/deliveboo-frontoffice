@@ -27,7 +27,8 @@ export default {
       cart: [],
       currRestaurantCartId: null,
       currRestaurantCartSlug: null,
-      error: false
+      error: false,
+      errorTimeout: null
     }
   },
 
@@ -96,7 +97,7 @@ export default {
       } else {
         this.error = true;
         this.cartMobileToggle = true;
-        setTimeout(() => {
+        this.errorTimeout = setTimeout(() => {
           this.error = false;
         }, 8000);
       }
@@ -164,6 +165,11 @@ export default {
     - in caso il carrello sia vuoto, togli l'id del ristorante
     */
     emptyCart() {
+      if(this.errorTimeout) {
+        clearTimeout(this.errorTimeout);
+        this.errorTimeout = null;
+      }
+      this.error = false;
       this.currRestaurantCartSlug = null;
       this.currRestaurantCartId = null;
       this.cart = [];
