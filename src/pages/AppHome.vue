@@ -51,8 +51,22 @@ export default {
     },
     
 
-    changePage(i) {
-      this.currPage = i;
+    changePageRight() {
+      console.log('click destra');
+      if(this.currPage === this.lastPage) {
+        this.currPage = 1;
+      } else {
+        this.currPage++;
+      }
+    },
+
+    changePageLeft() {
+      console.log('click sinistra');
+      if(this.currPage === 1) {
+        this.currPage = this.lastPage;
+      } else {
+        this.currPage--;
+      }
     },
 
     scrollToRestaurants() {
@@ -144,7 +158,10 @@ export default {
             <AppRestaurantCard class="res-card" v-for="restaurant in restaurants" :currRestaurant="restaurant" :key="restaurant.id"/>
           </div>
           <div class="pages">
-            <span class="page-number" @click="changePage(n)" v-for="n in lastPage" :key="n">{{ n }}</span>
+            <img class="arrow" src="/img/arrow-left.png" @click="changePageLeft">
+            <strong class="counter">{{ currPage }}</strong>
+            <img class="arrow" src="/img/arrow-right.png" @click="changePageRight">
+            <!-- <span class="page-number" @click="changePage(n)" v-for="n in lastPage" :key="n">{{ n }}</span> -->
           </div>
           <div class="back-to-filter">
             <a @click="scrollToFilters">Torna ai filtri</a>
@@ -191,6 +208,7 @@ export default {
 .search {
   background-color: $orange;
   padding-top: 50px;
+  padding-bottom: 30px;
 
   h2, h4 {
     text-align: center;
@@ -291,8 +309,18 @@ export default {
     padding: 20px 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 20px;
     justify-content: center;
+    align-items: center;
+
+    .counter {
+      font-size: 24px;
+    }
+    .arrow {
+      cursor: pointer;
+      width: 45px;
+      aspect-ratio: 1;
+    }
     .page-number {
       display: block;
       cursor: pointer;
