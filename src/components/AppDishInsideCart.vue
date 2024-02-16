@@ -8,8 +8,8 @@
       <div class="price">{{ dish.price }} &euro;</div>
     </div>
     <div class="dish-in-cart__bottom">
-      <img @click="add(dish)" class="action action--add" src="../../img/plus.png">
       <img @click="remove(dish)" class="action action--detuct" src="../../img/minus-sign.png">
+      <img @click="add(dish)" class="action action--add" src="../../img/plus.png">
     </div>
   </div>
 </template>
