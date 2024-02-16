@@ -380,10 +380,12 @@ export default {
             cursor: pointer;
             margin-top: 40px;
             text-align: center;
-            @include primaryButton();
-
-            &:hover {
-              background-color: $lightGreen;
+            
+            & a {
+              @include primaryButton();
+              &:hover {
+                background-color: $lightGreen;
+              }
             }
           }
         }
@@ -432,12 +434,15 @@ export default {
 
         .dishes {
           .checkout-btn-mobile {
+            cursor: pointer;
             text-align: center;
             margin: 34px 24px 14px 24px;
-            @include primaryButton();
 
-            &:hover {
-              background-color: $lightGreen;
+            & a {
+              @include primaryButton();
+              &:hover {
+                background-color: $lightGreen;
+              }
             }
           }
         }
