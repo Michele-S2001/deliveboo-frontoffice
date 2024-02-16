@@ -33,6 +33,28 @@ export default {
   },
 
   methods: {
+    scrollToTop() {
+      const duration = 0.1;
+      const start = window.scrollY; 
+      const distance = -start; 
+      let startTime = null;
+
+      const animation = (currentTime) => {
+        if (startTime === null) startTime = currentTime; 
+        const timeLapsed = currentTime - startTime;
+        const run = this.ease(timeLapsed, start, distance, duration); 
+        window.scrollTo(0, run); 
+        if (timeLapsed < duration) requestAnimationFrame(animation); 
+      };
+
+      requestAnimationFrame(animation);
+    },
+
+    ease(t, b, c, d) {
+      t /= d; 
+      return c * t * t + b;
+    },
+
     fetchRestaurant() {
       axios
         .get(`${store.BASE_URL}/restaurants/${this.slug}`)
@@ -250,7 +272,7 @@ export default {
                     Torna al ristorante
                   </router-link>
                 </div>
-                <div class="checkout-btn">
+                <div class="checkout-btn" @click="scrollToTop">
                   <router-link :to="{ name: 'payment'}">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</router-link>
                 </div>
               </div>
@@ -272,7 +294,7 @@ export default {
                     Torna al ristorante
                   </router-link>
                 </div>
-                <div class="checkout-btn-mobile">
+                <div class="checkout-btn-mobile" @click="scrollToTop">
                   <router-link :to="{ name: 'payment'}">Ordinare per {{ totalAmount.toFixed(2) }} &euro;</router-link>
                 </div>
               </div>

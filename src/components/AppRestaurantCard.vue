@@ -1,6 +1,6 @@
 <template>
-  <router-link :to="{ name: 'menu', params: { slug: currRestaurant.slug}}">
-    <div @click="scrollToTop" class="restaurant-card">
+  <router-link @click="scrollToTop()" :to="{ name: 'menu', params: { slug: currRestaurant.slug}}">
+    <div class="restaurant-card">
       <div class="restaurant-card__header">
         <img class="restaurant-img" :src="`http://127.0.0.1:8000/storage/${currRestaurant.thumb}`">
         <div class="categories">

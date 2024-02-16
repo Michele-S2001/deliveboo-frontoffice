@@ -52,6 +52,7 @@ export default {
     
 
     changePageRight() {
+      this.scrollToRestaurants();
       console.log('click destra');
       if(this.currPage === this.lastPage) {
         this.currPage = 1;
@@ -61,6 +62,7 @@ export default {
     },
 
     changePageLeft() {
+      this.scrollToRestaurants();
       console.log('click sinistra');
       if(this.currPage === 1) {
         this.currPage = this.lastPage;
