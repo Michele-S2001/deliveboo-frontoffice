@@ -11,12 +11,15 @@ export default {
 
     return {
       customer: {
-        nameSurname: '',
+        full_name: '',
         email: '',
-        address: '',
-        phoneNumber: '',
+        delivery_addres: '',
+        phone_number: '',
         notes: '',
+        subtotal: null,
+        payment_status: false
       },
+      
 
       nonce: '',
       error: '',
@@ -33,21 +36,39 @@ export default {
   },
 
   methods: {
+
+    triggerClick(){
+      document.getElementById('submit-button').click(); 
+    },
+
+    subTotal() {
+      this.customer.subtotal = this.cart
+        .map((el) => {
+          return parseFloat(el.price) * el.quantity
+        })
+        .reduce((acc, currValue) => (acc + currValue), 0);
+    },
     // TODO: gestire invio dell'ordine nel back-end
     sendOrder(){
       let customerToSend = {
-        name: this.customer.nameSurname,
+        name: this.customer.full_name,
         email: this.customer.email,
-        address: this.customer.address,
-        phone_number: this.customer.phoneNumber,
+        address: this.customer.delivery_addres,
+        phone_number: this.customer.phone_number,
+        notes: this.customer.notes,
+        subtotal: this.customer.subtotal,
+        payment_status: this.customer.payment_status
       };
       axios
-        .post(`${this.BASE_URL}/orders`, {
+        .post(`http://127.0.0.1:8000/api/orders`, {
           customer: customerToSend,
           cart: this.cart,
         })
         .then((res) => {
           this.currentOrderId = res.data.orderId;
+          if(res.data.success){
+            this.triggerClick();
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -136,13 +157,14 @@ export default {
     this.recoverRestaurantSlug();
     this.fetchAuth();
     this.dropIn();
+    this.subTotal();
   }
 }
 </script>
 
 <template>
   <DefaultLayout>
-    <!-- <form @submit.prevent="submitForm" id="form">
+    <form @submit.prevent="submitForm" id="form">
       <div class="container">
         <div class="row">
           <div class="col-6">
@@ -151,33 +173,37 @@ export default {
                 <h3>DATI ORDINE </h3>
                 <li>
                   <label for="name">Nome e Cognome</label>
-                  <input name="name" type="text" id="name" placeholder="Nome e Cognome..." required />
+                  <input v-model="customer.full_name" name="name" type="text" id="name" placeholder="Nome e Cognome..." required />
                 </li>
                 <li>
                   <label for="email">Email</label>
-                  <input name="email" type="email" id="email" placeholder="Email..." required />
+                  <input v-model="customer.email" name="email" type="email" id="email" placeholder="Email..." required />
                 </li>
                 <li>
                   <label for="number">Numero di cellulare</label>
-                  <input name="number" type="number" id="number" placeholder="Numero di cellulare..." required />
+                  <input v-model="customer.phone_number" name="number" type="number" id="number" placeholder="Numero di cellulare..." required />
                 </li>
                 <li>
                   <label for="address">Indirizzo</label>
-                  <input name="address" type="text" id="address" placeholder="Indirizzo..." required />
+                  <input v-model="customer.delivery_addres" name="address" type="text" id="address" placeholder="Indirizzo..." required />
+                </li>
+                <li>
+                  <label for="address">Note</label>
+                  <textarea v-model="customer.notes" name="notes" id="notes" cols="30" rows="10" placeholder="Note..."></textarea>
                 </li>
               </ul>
             </div>
             <button @click="sendOrder()" type="submit" ref="submit">
-              Procedi al pagamento
+              Conferma i tuoi dati
             </button>
           </div>
         </div>
       </div>
-    </form> -->
+    </form>
 
     <div class="container payment_form">
       <div id="dropin-container"></div>
-      <button id="submit-button" class="button button--small button--green">Purchase</button>
+      <button style="opacity: 0;" id="submit-button" class="button button--small button--green">Paga</button>
     </div>
 
     <div class="container">
@@ -262,6 +288,26 @@ export default {
 .payment_form {
   margin-bottom: 50px;
 }
+
+.row {
+    flex-direction: column;
+  }
+
+  .col-6 {
+    width: 100%;
+  }
+
+  form {
+    width: 30%;
+    margin: 50px auto;
+    background: $orange;
+    padding: 30px;
+    border-radius: 20px;
+  }
+
+  .payment {
+    margin-top: 10px;
+  }
 
 
 
