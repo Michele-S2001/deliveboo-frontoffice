@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AppHome from './pages/AppHome.vue';
 import AppMenu from './pages/AppMenu.vue';
 import AppCart from './pages/AppFormCart.vue';
+import AppOrder from './pages/AppOrder.vue';
 import App404 from './pages/App404.vue';
 
 const router = createRouter({
@@ -23,6 +24,11 @@ const router = createRouter({
       path: '/payment',
       name: 'payment',
       component: AppCart
+    },
+    {
+      path: '/order',
+      name: 'order',
+      component: AppOrder
     },
     {
       path: '/:pathMatch(.*)*',

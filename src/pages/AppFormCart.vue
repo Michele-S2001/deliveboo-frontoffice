@@ -48,7 +48,7 @@ export default {
         })
         .reduce((acc, currValue) => (acc + currValue), 0);
     },
-    // TODO: gestire invio dell'ordine nel back-end
+    
     sendOrder(){
       let customerToSend = {
         name: this.customer.full_name,
@@ -68,6 +68,9 @@ export default {
           this.currentOrderId = res.data.orderId;
           if(res.data.success){
             this.triggerClick();
+            setTimeout(() => {
+            this.$router.push({ name: 'order' }); 
+            }, 4000);
           }
         })
         .catch((error) => {
@@ -166,48 +169,57 @@ export default {
   <DefaultLayout>
     <form @submit.prevent="submitForm" id="form">
       <div class="container">
+        <!-- informazioni cliente -->
         <div class="row">
-          <div class="col-6">
+          <div class="col-6-1">
             <div class="delivery-info">
               <ul>
                 <h3>DATI ORDINE </h3>
-                <li>
+                <li class="d-flex">
                   <label for="name">Nome e Cognome</label>
                   <input v-model="customer.full_name" name="name" type="text" id="name" placeholder="Nome e Cognome..." required />
                 </li>
-                <li>
+                <li class="d-flex">
                   <label for="email">Email</label>
                   <input v-model="customer.email" name="email" type="email" id="email" placeholder="Email..." required />
                 </li>
-                <li>
+                <li class="d-flex">
                   <label for="number">Numero di cellulare</label>
                   <input v-model="customer.phone_number" name="number" type="number" id="number" placeholder="Numero di cellulare..." required />
                 </li>
-                <li>
+                <li class="d-flex">
                   <label for="address">Indirizzo</label>
                   <input v-model="customer.delivery_addres" name="address" type="text" id="address" placeholder="Indirizzo..." required />
                 </li>
-                <li>
+                <li class="d-flex">
                   <label for="address">Note</label>
                   <textarea v-model="customer.notes" name="notes" id="notes" cols="30" rows="10" placeholder="Note..."></textarea>
                 </li>
               </ul>
             </div>
-            <button @click="sendOrder()" type="submit" ref="submit">
-              Conferma i tuoi dati
-            </button>
           </div>
+          <!-- pagamento -->
+          <div class="col-6"> 
+           <div class=" payment_form">
+              <div id="dropin-container"></div>
+              <button style="opacity: 0;" id="submit-button">Paga</button>
+            </div> 
+          </div>
+         
         </div>
+        <!-- bottoni -->
+        <div class="align-items-center">
+          <button @click="sendOrder()" class="button" type="submit" ref="submit">
+            Conferma i tuoi dati
+          </button>
+        </div>  
       </div>
     </form>
 
-    <div class="container payment_form">
-      <div id="dropin-container"></div>
-      <button style="opacity: 0;" id="submit-button" class="button button--small button--green">Paga</button>
-    </div>
-
+    
+    <!-- riepilogo ordine -->
     <div class="container">
-      <h3>Riepilogo Ordine</h3>
+      <h3 class="summary_title">Riepilogo Ordine</h3>
       <div v-for="dish in cart" :key="dish.id" class="summary_cart">
         <div class="price">
           <span>{{ dish.name }}</span>
@@ -217,7 +229,7 @@ export default {
           <span>x {{ dish.quantity }}</span>
         </div>
       </div>
-      <div class="total_price">
+      <div class="total_price summary_title">
         Totale: {{ totalAmount.toFixed(2) }}
       </div>
     </div>
@@ -228,36 +240,27 @@ export default {
 @use '../styles/partials/variables' as *;
 @use '../styles/partials/mixins' as *;
 
+.align-items-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
 .button {
   cursor: pointer;
-  font-weight: 500;
-  left: 3px;
-  line-height: inherit;
-  position: relative;
-  text-decoration: none;
-  text-align: center;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 3px;
-  display: inline-block;
-}
-
-.button--small {
-  padding: 10px 20px;
-  font-size: 0.875rem;
-}
-
-.button--green {
-  outline: none;
-  background-color: #64d18a;
-  border-color: #64d18a;
-  color: white;
-  transition: all 200ms ease;
-}
-
-.button--green:hover {
-  background-color: #8bdda8;
-  color: white;
+  display: flex;
+  margin: 0 auto;
+  color: $white;
+  border: none;
+  background-color: $green;
+  padding: 0 20px;
+  line-height: 40px;
+  border-radius: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  &:hover {
+  background-color: $lightGreen;
+  }
 }
 
 .summary_cart {
@@ -284,32 +287,36 @@ export default {
   margin-top: 10px;
   padding-left: 10px;
 }
-
-.payment_form {
-  margin-bottom: 50px;
-}
-
-.row {
-    flex-direction: column;
-  }
-
-  .col-6 {
-    width: 100%;
-  }
-
-  form {
-    width: 30%;
+form {
+    width: 80%;
     margin: 50px auto;
     background: $orange;
     padding: 30px;
     border-radius: 20px;
   }
 
-  .payment {
-    margin-top: 10px;
+input {
+    width: 70%;
+    line-height: 40px;
+    border-radius: 10px;
+    border: none;
+    padding-left: 10px;
   }
 
+  textarea {
+    width: 70%;
+    height: 70px;
+    line-height: 40px;
+    border-radius: 10px;
+    border: none;
+    padding-left: 10px;
+  }
 
+  .d-flex {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
 
 @media (max-width: 768px) {
   .row {
@@ -321,7 +328,7 @@ export default {
   }
 
   form {
-    width: 300px;
+    width: 280px;
     margin: 50px auto;
     background: $orange;
     padding: 30px;
@@ -338,10 +345,38 @@ export default {
 
   .summary_cart {
     max-width: 100%;
+    align-items: center;
+    margin-left: 30px;
+    margin-right: 30px;
+    
 
     .price {
-      width: 80%;
+      width: 50%;
     }
   }
+
+  .align-items-center {
+  display: flex;
+  flex-direction: column;
+  }
+
+  input {
+    width: 100%;
+    line-height: 40px;
+    border-radius: 10px;
+    border: none;
+    padding-left: 10px;
+  }
+  textarea {
+    width: 100%;
+    height: 50px;
+    
+  }
+
+  .summary_title {
+    margin-left: 30px;
+    
+  }
+
 }
 </style>
