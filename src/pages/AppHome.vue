@@ -83,12 +83,27 @@ export default {
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth' });
       }
+    },
+
+    saveCurrCategories() {
+      localStorage.setItem('currSelectedCategories', JSON.stringify(this.selectedCategories));
+    },
+
+    recoverCategories() {
+      const storageSelectedCategories = localStorage.getItem('currSelectedCategories');
+      if(storageSelectedCategories) {
+        this.selectedCategories = JSON.parse(storageSelectedCategories);
+      }
     }
   },
 
   created() {
     this.fetchCategories();
     this.fetchRestaurants();
+  },
+
+  mounted() {
+    this.recoverCategories();
   },
 
   watch: {
@@ -98,6 +113,7 @@ export default {
 
     selectedCategories() {
       this.fetchRestaurants();
+      this.saveCurrCategories();
       this.currPage = 1;
     }
   },

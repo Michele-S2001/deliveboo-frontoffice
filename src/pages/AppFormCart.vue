@@ -230,7 +230,7 @@ export default {
         </div>
       </div>
       <div class="total_price summary_title">
-        Totale: {{ totalAmount.toFixed(2) }}
+        Totale: {{ totalAmount.toFixed(2) }} &euro;
       </div>
     </div>
   </DefaultLayout>
